@@ -1,37 +1,29 @@
 #include "mainserverprotocol.h"
+#include "connectionthread.h"
 
 MainServerProtocol::MainServerProtocol(QObject *parent) : QTcpServer(parent)
 {
 }
 
-void MainServerProtocol::startServer(){
-    quint16 numport = 5555;
-    qDebug() << ":5555";
+void MainServerProtocol::startServer()
+{
+    quint16   portNum = 1234;
 
-    if(!this->listen(QHostAddress::Any,numport)){
-        qDebug() << "Could not start server";
+
+    if (!this->listen(QHostAddress::AnyIPv4, portNum))
+    {
+        qDebug() << "Server not Started";
     }
-    else{
-        qDebug() << "Listen to port: " << numport << "...";
+    else
+    {
+        qDebug() << "Listening at " << serverAddress() << ":" << serverPort();
     }
 }
 
-void MainServerProtocol::incomingConnection(qintptr socketDescriptor){
-    qDebug() << socketDescriptor << "Connecting...";
-    socket = new QTcpSocket();
-    //connect and get message
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
-    //disconnect
-    //connect(socket, SIGNAL(disconnect()), this, SLOT(disconnect()));
-    qDebug() << socketDescriptor << " Connected";
-}
-
-void MainServerProtocol::readyRead(){
-    QByteArray Data = socket->readAll();
-    qDebug() << socketDescriptor << "Data in: " << Data;
-}
-
-void MainServerProtocol::disconnect(){
-    qDebug() << socketDescriptor << " Disconnected";
-    socket->deleteLater();
+void MainServerProtocol::incomingConnection(qintptr socketDescriptor)
+{
+    qDebug() << socketDescriptor << " connecting to Host...";
+    ConnectionThread *thread = new ConnectionThread(socketDescriptor, this);
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
 }

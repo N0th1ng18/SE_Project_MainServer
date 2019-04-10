@@ -1,9 +1,8 @@
 #ifndef MAINSERVERPROTOCOL_H
 #define MAINSERVERPROTOCOL_H
 
-#include <QObject>
 #include <QTcpServer>
-#include <QTcpSocket>
+#include "connectionthread.h"
 
 class MainServerProtocol : public QTcpServer
 {
@@ -11,17 +10,6 @@ class MainServerProtocol : public QTcpServer
 public:
     explicit MainServerProtocol(QObject *parent = nullptr);
     void startServer();
-
-signals:
-    void error(QTcpSocket::SocketError socketerror);
-
-public slots:
-    void readyRead();
-    void disconnect();
-
-private:
-    QTcpSocket *socket;
-    qintptr socketDescriptor;
 
 protected:
     void incomingConnection(qintptr socketDescriptor);
