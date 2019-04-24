@@ -1,6 +1,7 @@
 QT -= gui
 QT += network\
-      core
+      core\
+      sql
 
 TARGET = TcpServer
 CONFIG += console
@@ -20,7 +21,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    mainserverprotocol.cpp
+    database.cpp \
+    server.cpp \
+    connectionthread.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -28,5 +31,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    mainserverprotocol.h \
-    mainserverprotocol.h
+    database.h \
+    server.h \
+    connectionthread.h
