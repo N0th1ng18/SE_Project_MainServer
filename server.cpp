@@ -1,9 +1,10 @@
 #include "server.h"
 
 
-Server::Server(QObject *parent) :
+Server::Server(int serverType, QObject *parent) :
     QTcpServer(parent)
 {
+    this->serverType = serverType;
 }
 
 void Server::startServer(quint16 port)
@@ -23,9 +24,30 @@ void Server::incomingConnection(qintptr socketDescriptor)
 {
     qDebug() << socketDescriptor << " Connecting...";
 
-    ConnectionThread *thread = new ConnectionThread(socketDescriptor, this);
+    switch(serverType)
+    {
+    case SType::ClientServer:
+        {
 
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        ConnectionThreadClient *thread = new ConnectionThreadClient(socketDescriptor, this);
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        thread->start();
 
-    thread->start();
+        break;
+        }
+    case SType::GameServer:
+        {
+
+        ConnectionThreadServer *thread = new ConnectionThreadServer(socketDescriptor, this);
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        thread->start();
+
+        break;
+        }
+    }
+
+
+
+
+
 }

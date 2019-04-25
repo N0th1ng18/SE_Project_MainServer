@@ -23,7 +23,8 @@ SOURCES += \
         main.cpp \
     database.cpp \
     server.cpp \
-    connectionthread.cpp
+    connectionthreadServer.cpp \
+    connectionthreadClient.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -33,4 +34,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     database.h \
     server.h \
-    connectionthread.h
+    connectionthreadserver.h \
+    connectionthreadclient.h
+
+RESOURCES +=

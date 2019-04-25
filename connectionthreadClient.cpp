@@ -1,12 +1,12 @@
-#include "connectionthread.h"
+#include "connectionthreadclient.h"
 
-ConnectionThread::ConnectionThread(qintptr socketID, QObject *parent) :
+ConnectionThreadClient::ConnectionThreadClient(qintptr socketID, QObject *parent) :
     QThread(parent)
 {
     this->socketDescriptor = socketID;
 }
 
-void ConnectionThread::run()
+void ConnectionThreadClient::run()
 {
     //create Socket
     socket = new QTcpSocket();
@@ -27,7 +27,7 @@ void ConnectionThread::run()
     exec();
 }
 
-void ConnectionThread::readyRead()
+void ConnectionThreadClient::readyRead()
 {
     //Read All Data in Socket buffer
     QString data = socket->readAll();
@@ -40,7 +40,7 @@ void ConnectionThread::readyRead()
     }
 }
 
-void ConnectionThread::disconnected()
+void ConnectionThreadClient::disconnected()
 {
     qDebug() << socketDescriptor << " Disconnected";
 
@@ -49,27 +49,41 @@ void ConnectionThread::disconnected()
     exit(0);
 }
 
-void ConnectionThread::processMessage(QString message){
+void ConnectionThreadClient::processMessage(QString message){
+    qDebug() << message;
+
     //Seperate message into tokens
     QList<QString> tokens = message.split("|");
 
+
+
     switch(tokens[0].toInt())
     {
-    case Msg::CreateAccount:
+    case Msg::CREATEACCOUNT:
+        {
 
         break;
-    case Msg::UserLogin:
+        }
+    case Msg::USERLOGIN:
+        {
 
         break;
-    case Msg::CreateGame:
+        }
+    case Msg::CREATEGAME:
+        {
 
         break;
-    case Msg::JoinGame:
+        }
+    case Msg::JOINGAME:
+        {
 
         break;
-    case Msg::UserData:
+        }
+    case Msg::USERDATA:
+        {
 
         break;
+        }
     //Default Drops message
     }
 

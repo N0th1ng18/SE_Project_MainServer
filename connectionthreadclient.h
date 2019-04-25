@@ -1,5 +1,5 @@
-#ifndef CONNECTIONTHREAD_H
-#define CONNECTIONTHREAD_H
+#ifndef CONNECTIONTHREADCLIENT_H
+#define CONNECTIONTHREADCLIENT_H
 
 
 #include <QThread>
@@ -7,11 +7,11 @@
 #include <QDebug>
 #include <QTextCodec>
 
-class ConnectionThread : public QThread
+class ConnectionThreadClient : public QThread
 {
     Q_OBJECT
 public:
-    explicit ConnectionThread(qintptr socketID, QObject *parent = nullptr);
+    explicit ConnectionThreadClient(qintptr socketID, QObject *parent = nullptr);
 
     void run();
 
@@ -30,13 +30,13 @@ private:
 
     enum Msg
     {
-        CreateAccount,
-        UserLogin,
-        CreateGame,
-        JoinGame,
-        UserData
+        CREATEACCOUNT,
+        USERLOGIN,
+        CREATEGAME,
+        JOINGAME,
+        USERDATA
     };
 
 };
 
-#endif // CONNECTIONTHREAD_H
+#endif // CONNECTIONTHREADCLIENT_H
