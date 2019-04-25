@@ -37,4 +37,5 @@ HEADERS += \
     connectionthreadserver.h \
     connectionthreadclient.h
 
-RESOURCES +=
+RESOURCES += \
+    database.qrc
