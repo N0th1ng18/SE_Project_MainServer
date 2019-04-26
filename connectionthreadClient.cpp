@@ -88,3 +88,35 @@ void ConnectionThreadClient::processMessage(QString message){
     }
 
 }
+
+void ConnectionThreadClient::createAccount(QList<QString> userPass){
+    QString userName = userPass[0];
+    QString password = userPass[1];
+    // passes the Username and password
+
+}
+
+void ConnectionThreadClient::userLogin(QList<QString> login){
+    QString userName = login[0];
+    QString password = login[1];
+
+}
+
+void ConnectionThreadClient::createGame(QList<QString> createGame){
+    QString gameId = createGame[0]; //needs to be converted to int for database
+    QString serverId = createGame[1]; //needs to be converted to int for database
+    QString roomNum = createGame[2]; //needs to be converted to int for database
+    QString numPlayers = createGame[3]; //needs to be converted to int for database
+    QString turn = createGame[4]; //needs to be converted to int for database
+
+}
+
+void ConnectionThreadClient::joinGame(QList<QString>){
+    //Calls Seat
+
+}
+
+void ConnectionThreadClient::userData(QList<QString>){
+    //Updates Player data
+
+}
