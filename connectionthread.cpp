@@ -12,7 +12,7 @@ ConnectionThread::ConnectionThread(int threadID, qintptr socketID, QObject *pare
 void ConnectionThread::run()
 {
     queries = new Queries();
-    queries->connect(threadID);
+    //queries->connect(threadID);
 
     //create Socket
     socket = new QTcpSocket();
@@ -70,8 +70,19 @@ void ConnectionThread::processMessage(QString message)
     {
     case Msg::CREATEACCOUNT:
         {
+            int info;
             if (tokens.count() == 3){
-                createAccount(tokens);
+              info = createAccount(tokens);
+              if (info == 1){
+                  //Login Successful
+
+              }
+              if (info == 2){
+                  //Username unavalable
+              }
+              if (info == 3){
+                 //Creation failed
+              }
             } else {
                 break;
             }
@@ -79,8 +90,18 @@ void ConnectionThread::processMessage(QString message)
         }
     case Msg::USERLOGIN:
         {
+            int info;
             if (tokens.count() == 3){
-                userLogin(tokens);
+               info = userLogin(tokens);
+               if (info == 1){
+                   //Successful
+               }
+               if (info == 2){
+                   //Unsuccessful
+               }
+               if (info == 3){
+                    //Creation failed
+               }
             }else {
                 break;
             }
@@ -89,21 +110,43 @@ void ConnectionThread::processMessage(QString message)
     case Msg::CREATEGAME:
         {
             if (tokens.count() == 6){
-                createGame(tokens);
+                if (createGame(tokens)){
+                    //send back true
+                }else {
+                    //send back false
+                }
             } else {
                 break;
-
             }
             break;
         }
     case Msg::JOINGAME:
         {
             //joinGame();
+            if (tokens.count() == 3){
+                if (joinGame(tokens)){
+                    //send true
+                } else {
+                    //send false
+                }
+            } else {
+                break;
+            }
             break;
         }
     case Msg::USERDATA:
         {
             //userData();
+            QList<QString> rlist;
+            if (tokens.count() == 2){
+                rlist.append(userData(tokens));
+                if (rlist[0] == "FALSE"){
+                    break;
+                }else {
+                    //Send List to Client
+                    //return rlist;
+                }
+            }
             break;
         }
     //Default Drops message
@@ -111,33 +154,40 @@ void ConnectionThread::processMessage(QString message)
 
 }
 
-void ConnectionThread::createAccount(QList<QString> userPass){
+int ConnectionThread::createAccount(QList<QString> userPass){
     QString userName = userPass[1];
     QString password = userPass[2];
     // passes the Username and password
     if (!queries->checkUser(userName)){
         if(queries->addUser(userName, password)){
             qDebug("Sent username and password");
+            return 1;
+        } else {
+            qDebug("Creation failed");
+            return 3;
         }
-    } else {
+    }else {
         qDebug("User needs a different username and return info to client");
+        return 2;
     }
 
 }
 
-void ConnectionThread::userLogin(QList<QString> login){
+int ConnectionThread::userLogin(QList<QString> login){
     QString userName = login[1];
     QString password = login[2];
 
     if (queries->checkUser(userName)){
         qDebug("User found");
         if (queries->checkPassword(userName, password)){
+            return 1;
             qDebug("Username and password sent");
         } else {
+            return 3;
             qDebug("Username and password not sent and ");
         }
     } else {
-
+        return 2;
         qDebug("User not found");
     }
 
@@ -145,30 +195,53 @@ void ConnectionThread::userLogin(QList<QString> login){
 
 }
 
-void ConnectionThread::createGame(QList<QString> createGame){
+bool ConnectionThread::createGame(QList<QString> createGame){
     int gameId = createGame[1].toInt();
     int serverId = createGame[2].toInt();
     int roomNum = createGame[3].toInt();
     int numPlayers = createGame[4].toInt();
     int turns = createGame[5].toInt();
 
-    queries->createGame(gameId, serverId, roomNum, numPlayers, turns);
+    if (queries->createGame(gameId, serverId, roomNum, numPlayers, turns)){
+        return true;
+    }else {
+        return false;
+    }
 
 }
 
-void ConnectionThread::joinGame(QList<QString> join){
+bool ConnectionThread::joinGame(QList<QString> join){
 
-    QString username = join[0];
-    int gId = join[1].toInt();
+    QString username = join[1];
+    int gId = join[2].toInt();
     bool add = true;
 
-    //Calls the query for updating the Seat Table
-    queries ->updateSeat(username, gId);
-    //Calls the query for updating the number of players in the Game
-    queries ->updateNumPlayer(username, gId, add);
+    if (queries ->updateSeat(username, gId) && queries ->updateNumPlayer(username, gId, add))
+    {
+       return true;
+    } else {
+        return false;
+    }
+
 
 }
 
-void ConnectionThread::userData(QList<QString>){
-    //Updates Player data
+QList<QString> ConnectionThread::userData(QList<QString> data){
+    //returns gameid connected to a userName
+    QString username = data[1];
+
+    QList<QString> gamelist;
+
+    gamelist.append(data);
+
+    gamelist = queries->getUserGameData(username);
+
+    if (gamelist.size() != 0){
+        return gamelist;
+    } else {
+        QList<QString> error;
+        error.append("FAlSE");
+        return error;
+
+    }
 }

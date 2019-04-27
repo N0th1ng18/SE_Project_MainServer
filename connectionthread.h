@@ -41,11 +41,11 @@ private:
     };
 
 
-    void createAccount(QList<QString>);
-    void userLogin(QList<QString>);
-    void createGame(QList<QString>);
-    void joinGame(QList<QString>);
-    void userData(QList<QString>);
+    int createAccount(QList<QString>);
+    int userLogin(QList<QString>);
+    bool createGame(QList<QString>);
+    bool joinGame(QList<QString>);
+    QList<QString> userData(QList<QString>);
 
 
 };

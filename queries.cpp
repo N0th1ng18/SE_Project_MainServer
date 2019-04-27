@@ -206,7 +206,7 @@ void Queries::expiredDormantServers()
     }
 }
 */
-void updateSeat(QString userName, int gameId){
+bool updateSeat(QString userName, int gameId){
     //Used to add players to game and update the Seat
     qDebug ("Update Seat Data");
 
@@ -223,13 +223,18 @@ void updateSeat(QString userName, int gameId){
     }
 }
 
-void updateNumPlayer(QString userName, int gameId, bool action){
+bool updateNumPlayer(QString userName, int gameId, bool action){
     //Updates the number of players
     // if action is true add a player and if action is false remove a player
     qDebug ("Update number of players in Game");
 
     QSqlQuery query;
     int num;
+
+    int ori;
+    query.prepare("SELECT numPlayers FROM Game WHERE gameId = (:gameId)");
+    query.bindValue(":gameId", gameId);
+    ori = query.value(0).toInt();
 
     if (action){
         //adds a player
@@ -248,5 +253,7 @@ void updateNumPlayer(QString userName, int gameId, bool action){
         //not done yet
     }
 }
-
+bool createGame(int gameId, int serverId, int roomNum, int numPlayers, int turns){
+    return false;
+}
 
