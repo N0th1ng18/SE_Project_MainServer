@@ -47,13 +47,6 @@ private:
     void joinGame(QList<QString>);
     void userData(QList<QString>);
 
-    /*DELETE THESE BELOW!!!!!!!!!!!!!!!!!!!!*/
-    void createAccount();
-    void userLogin();
-    void createGame();
-    void joinGame();
-    void userData();
-
 
 };
 

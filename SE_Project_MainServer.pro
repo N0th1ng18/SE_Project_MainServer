@@ -22,9 +22,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     server.cpp \
-    queries.cpp \
     connectionthread.cpp \
-    authentication.cpp
+    authentication.cpp \
+    queries.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -33,9 +33,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     server.h \
-    queries.h \
     connectionthread.h \
-    authentication.h
+    authentication.h \
+    queries.h
 
 RESOURCES += \
     database.qrc
