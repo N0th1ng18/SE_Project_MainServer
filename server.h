@@ -3,14 +3,14 @@
 
 
 #include <QTcpServer>
-#include "connectionthreadclient.h"
-#include "connectionthreadserver.h"
+#include "connectionthread.h"
+#include "authentication.h"
 
 class Server : public QTcpServer
 {
     Q_OBJECT
 public:
-    explicit Server(int serverType = 0, QObject *parent = nullptr);
+    explicit Server(QObject *parent = nullptr);
     void startServer(quint16 port);
 signals:
 
@@ -18,12 +18,8 @@ public slots:
 
 protected:
     void incomingConnection(qintptr socketDescriptor);
-    int serverType;
 
-    enum SType{
-        ClientServer,
-        GameServer
-    };
+    int threadID = 0;
 
 };
 

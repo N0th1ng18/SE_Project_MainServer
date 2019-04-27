@@ -5,13 +5,13 @@
 #include <QThread>
 #include <QTcpSocket>
 #include <QDebug>
-#include <QTextCodec>
+#include "queries.h"
 
-class ConnectionThreadClient : public QThread
+class ConnectionThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit ConnectionThreadClient(qintptr socketID, QObject *parent = nullptr);
+    explicit ConnectionThread(int threadID, qintptr socketID, QObject *parent = nullptr);
 
     void run();
 
@@ -27,6 +27,8 @@ private:
     void processMessage(QString message);
     QTcpSocket *socket;
     qintptr socketDescriptor;
+    Queries* queries;
+    int threadID;
 
     enum Msg
     {
@@ -36,6 +38,13 @@ private:
         JOINGAME,
         USERDATA
     };
+
+    void createAccount();
+    void userLogin();
+    void createGame();
+    void joinGame();
+    void userData();
+
 
 };
 

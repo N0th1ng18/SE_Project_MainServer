@@ -1,13 +1,17 @@
-#include "connectionthreadclient.h"
+#include "connectionthread.h"
 
-ConnectionThreadClient::ConnectionThreadClient(qintptr socketID, QObject *parent) :
+ConnectionThread::ConnectionThread(int threadID, qintptr socketID, QObject *parent) :
     QThread(parent)
 {
     this->socketDescriptor = socketID;
+    this->threadID = threadID;
 }
 
-void ConnectionThreadClient::run()
+void ConnectionThread::run()
 {
+    queries = new Queries();
+    queries->connect(threadID);
+
     //create Socket
     socket = new QTcpSocket();
 
@@ -27,8 +31,10 @@ void ConnectionThreadClient::run()
     exec();
 }
 
-void ConnectionThreadClient::readyRead()
+void ConnectionThread::readyRead()
 {
+    //If message doesnt have Active code it is sent to USERLOGIN only
+
     //Read All Data in Socket buffer
     QString data = socket->readAll();
 
@@ -40,7 +46,7 @@ void ConnectionThreadClient::readyRead()
     }
 }
 
-void ConnectionThreadClient::disconnected()
+void ConnectionThread::disconnected()
 {
     qDebug() << socketDescriptor << " Disconnected";
 
@@ -49,7 +55,8 @@ void ConnectionThreadClient::disconnected()
     exit(0);
 }
 
-void ConnectionThreadClient::processMessage(QString message){
+void ConnectionThread::processMessage(QString message)
+{
     qDebug() << message;
 
     //Seperate message into tokens
@@ -61,30 +68,57 @@ void ConnectionThreadClient::processMessage(QString message){
     {
     case Msg::CREATEACCOUNT:
         {
-
-        break;
+            createAccount();
+            break;
         }
     case Msg::USERLOGIN:
         {
-
-        break;
+            userLogin();
+            break;
         }
     case Msg::CREATEGAME:
         {
-
-        break;
+            createGame();
+            break;
         }
     case Msg::JOINGAME:
         {
-
-        break;
+            joinGame();
+            break;
         }
     case Msg::USERDATA:
         {
-
-        break;
+            userData();
+            break;
         }
     //Default Drops message
     }
+
+}
+
+void ConnectionThread::createAccount()
+{
+
+}
+void ConnectionThread::userLogin()
+{
+
+}
+void ConnectionThread::createGame()
+{
+    //Get Best Server
+    QString bestServerString = queries->selectBestServer();
+
+
+
+
+
+}
+void ConnectionThread::joinGame()
+{
+
+}
+void ConnectionThread::userData()
+{
 
 }
