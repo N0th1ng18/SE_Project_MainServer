@@ -68,27 +68,27 @@ void ConnectionThread::processMessage(QString message)
     {
     case Msg::CREATEACCOUNT:
         {
-            createAccount();
+            //createAccount();
             break;
         }
     case Msg::USERLOGIN:
         {
-            userLogin();
+            //userLogin();
             break;
         }
     case Msg::CREATEGAME:
         {
-            createGame();
+            //createGame();
             break;
         }
     case Msg::JOINGAME:
         {
-            joinGame();
+            //joinGame();
             break;
         }
     case Msg::USERDATA:
         {
-            userData();
+            //userData();
             break;
         }
     //Default Drops message
@@ -96,29 +96,33 @@ void ConnectionThread::processMessage(QString message)
 
 }
 
-void ConnectionThread::createAccount()
-{
+void ConnectionThread::createAccount(QList<QString> userPass){
+    QString userName = userPass[0];
+    QString password = userPass[1];
+    // passes the Username and password
 
 }
-void ConnectionThread::userLogin()
-{
+
+void ConnectionThread::userLogin(QList<QString> login){
+    QString userName = login[0];
+    QString password = login[1];
 
 }
-void ConnectionThread::createGame()
-{
-    //Get Best Server
-    QString bestServerString = queries->selectBestServer();
 
-
-
-
-
-}
-void ConnectionThread::joinGame()
-{
+void ConnectionThread::createGame(QList<QString> createGame){
+    QString gameId = createGame[0]; //needs to be converted to int for database
+    QString serverId = createGame[1]; //needs to be converted to int for database
+    QString roomNum = createGame[2]; //needs to be converted to int for database
+    QString numPlayers = createGame[3]; //needs to be converted to int for database
+    QString turn = createGame[4]; //needs to be converted to int for database
 
 }
-void ConnectionThread::userData()
-{
 
+void ConnectionThread::joinGame(QList<QString>){
+    //Calls Seat
+
+}
+
+void ConnectionThread::userData(QList<QString>){
+    //Updates Player data
 }

@@ -22,6 +22,11 @@ signals:
 public slots:
     void readyRead();
     void disconnected();
+    void createAccount(QList<QString>);
+    void userLogin(QList<QString>);
+    void createGame(QList<QString>);
+    void joinGame(QList<QString>);
+    void userData(QList<QString>);
 
 private:
     void processMessage(QString message);
