@@ -102,13 +102,6 @@ void ConnectionThread::createAccount(QList<QString> userPass){
     QString userName = userPass[0];
     QString password = userPass[1];
     // passes the Username and password
-
-}
-
-void ConnectionThread::userLogin(QList<QString> login){
-    QString userName = login[0];
-    QString password = login[1];
-
     if (!queries->checkUser(userName)){
         if(queries->addUser(userName, password)){
             qDebug("Sent username and password");
@@ -119,13 +112,34 @@ void ConnectionThread::userLogin(QList<QString> login){
 
 }
 
-void ConnectionThread::createGame(QList<QString> createGame){
-    int gameId = createGame[0].toInt(); //needs to be converted to int for database
-    int serverId = createGame[1].toInt(); //needs to be converted to int for database
-    int roomNum = createGame[2].toInt(); //needs to be converted to int for database
-    int numPlayers = createGame[3].toInt(); //needs to be converted to int for database
-    int turns = createGame[4].toInt(); //needs to be converted to int for database
+void ConnectionThread::userLogin(QList<QString> login){
+    QString userName = login[0];
+    QString password = login[1];
 
+    if (queries->checkUser(userName)){
+        qDebug("User found");
+        if (queries->checkPassword(userName, password)){
+            qDebug("Username and password sent");
+        } else {
+            qDebug("Username and password not sent");
+        }
+    } else {
+
+        qDebug("User not found");
+    }
+
+
+
+}
+
+void ConnectionThread::createGame(QList<QString> createGame){
+    int gameId = createGame[0].toInt();
+    int serverId = createGame[1].toInt();
+    int roomNum = createGame[2].toInt();
+    int numPlayers = createGame[3].toInt();
+    int turns = createGame[4].toInt();
+
+    queries ->createGame(gameId, serverId, roomNum, numPlayers, turns);
 
 }
 
@@ -133,10 +147,13 @@ void ConnectionThread::joinGame(QList<QString> join){
 
     QString username = join[0];
     int gId = join[1].toInt();
-    int addPlayer = 1;
+    bool add = true;
 
     //Calls the query for updating the Seat Table
+
+    queries ->updateSeat(username, gId);
     //Calls the query for updating the number of players in the Game
+    queries ->updateNumPlayer(username, gId, add);
 
 }
 

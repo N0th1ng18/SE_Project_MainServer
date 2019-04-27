@@ -23,6 +23,7 @@ public:
     void expiredDormantServers();
     void updateSeat(QString userName, int gameId);
     void updateNumPlayer(QString userName, int gameId, bool action);
+    void createGame(int gameId, int serverId, int roomNum, int numPlayers, int turns);
 
 private:
     QSqlDatabase db;
