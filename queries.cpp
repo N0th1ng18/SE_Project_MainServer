@@ -247,4 +247,6 @@ void updateNumPlayer(QString userName, int gameId, bool action){
         num = num - 1;
         //not done yet
     }
+}
+
 

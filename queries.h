@@ -14,6 +14,7 @@ public:
     bool checkUser(QString userName);
     bool checkPassword(QString userName, QString password);
     bool addUser(QString userName, QString password);
+    bool createGame(int gameId, int serverId, int roomNum, int numPlayer, int turns);
     QString selectBestServer();
     void updateServerInfo(QString serverData);
     QList<QString> getServerData(int roomID);
