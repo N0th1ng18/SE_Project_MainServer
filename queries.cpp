@@ -192,3 +192,49 @@ void Queries::expiredDormantServers()
 {
 //find server running over MAX_DORMANT_TIME and then remove all existence of the game from the database, players and server.
 }
+
+void updateSeat(QString userName, int gameId){
+    //Used to add players to game and update the Seat
+    qDebug ("Update Seat Data");
+
+    QSqlQuery query;
+    query.prepare("INSERT INTO Seat (userName, gameID)"
+                  "VALUES(:userName, :gameID)");
+    query.bindValue(":userName", userName);
+    query.bindValue(":gameID", gameId);
+    if (query.exec()){
+        qDebug("Successfull");
+    } else {
+        qDebug("Failed");
+        qDebug() << query.lastError();
+    }
+}
+
+void updateNumPlayer(QString userName, int gameId, bool action){
+    //Updates the number of players
+    // if action is true add a player and if action is false remove a player
+    qDebug ("Update number of players in Game");
+
+    QSqlQuery query;
+    int num;
+
+    if (action){
+        //adds a player
+        query.prepare("SELECT numPlayers FROM Game WHERE gameId = (:gameId)");
+        query.bindValue(":gameId", gameId);
+        num = query.value(0).toInt();
+        num = 1 + num;
+        //not done yet
+
+    } else {
+        //subtracts a player
+        query.prepare("SELECT numPlayers FROM Game WHERE gameId = (:gameId)");
+        query.bindValue(":gameId", gameId);
+        num = query.value(0).toInt();
+        num = num - 1;
+        //not done yet
+    }
+
+}
+
+

@@ -21,6 +21,8 @@ public:
     QList<QString> getServerData(int roomID);
     QList<QString> getUserGameData(QString userName);
     void expiredDormantServers();
+    void updateSeat(QString userName, int gameId);
+    void updateNumPlayer(QString userName, int gameId, bool action);
 
 private:
     QSqlDatabase db;

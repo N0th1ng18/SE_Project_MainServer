@@ -1,4 +1,6 @@
 #include "connectionthread.h"
+#include <iostream>
+#include <sstream>
 
 ConnectionThread::ConnectionThread(int threadID, qintptr socketID, QObject *parent) :
     QThread(parent)
@@ -68,12 +70,12 @@ void ConnectionThread::processMessage(QString message)
     {
     case Msg::CREATEACCOUNT:
         {
-            //createAccount();
+            createAccount();
             break;
         }
     case Msg::USERLOGIN:
         {
-            //userLogin();
+            userLogin();
             break;
         }
     case Msg::CREATEGAME:
@@ -107,19 +109,34 @@ void ConnectionThread::userLogin(QList<QString> login){
     QString userName = login[0];
     QString password = login[1];
 
+    if (!queries->checkUser(userName)){
+        if(queries->addUser(userName, password)){
+            qDebug("Sent username and password");
+        }
+    } else {
+        qDebug("Username was found in database");
+    }
+
 }
 
 void ConnectionThread::createGame(QList<QString> createGame){
-    QString gameId = createGame[0]; //needs to be converted to int for database
-    QString serverId = createGame[1]; //needs to be converted to int for database
-    QString roomNum = createGame[2]; //needs to be converted to int for database
-    QString numPlayers = createGame[3]; //needs to be converted to int for database
-    QString turn = createGame[4]; //needs to be converted to int for database
+    int gameId = createGame[0].toInt(); //needs to be converted to int for database
+    int serverId = createGame[1].toInt(); //needs to be converted to int for database
+    int roomNum = createGame[2].toInt(); //needs to be converted to int for database
+    int numPlayers = createGame[3].toInt(); //needs to be converted to int for database
+    int turns = createGame[4].toInt(); //needs to be converted to int for database
+
 
 }
 
-void ConnectionThread::joinGame(QList<QString>){
-    //Calls Seat
+void ConnectionThread::joinGame(QList<QString> join){
+
+    QString username = join[0];
+    int gId = join[1].toInt();
+    int addPlayer = 1;
+
+    //Calls the query for updating the Seat Table
+    //Calls the query for updating the number of players in the Game
 
 }
 
