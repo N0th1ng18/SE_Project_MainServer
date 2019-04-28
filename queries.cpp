@@ -265,13 +265,12 @@ void Queries::updateSeat(QString userName, int gameID){
     }
 }
 
-void Queries::updateNumPlayer(int gameID, int playerCount){
+void Queries::updateNumPlayer(int gameID){
     //Updates the number of players
     // if action is true add a player and if action is false remove a player
     qDebug ("Updating number of players in Game");
     QSqlQuery query(db);
-    query.prepare("UPDATE Game SET numPlayers = (:playerCount) WHERE gameID = (:gameID)");
-    query.bindValue(":playerCount", playerCount);
+    query.prepare("UPDATE Game SET numPlayers = numPlayer + 1 WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
     if (query.exec())
     {

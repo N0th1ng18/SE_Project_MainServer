@@ -75,54 +75,125 @@ void ConnectionThread::processMessage(QString message)
     switch(tokens[0].toInt())
     {
     case Msg::CREATEACCOUNT:
-        {
-            //createAccount();
-            break;
+    {
+        int info;
+        if (tokens.count() == 3){
+          info = createAccount(tokens);
+          if (info == 1){
+              //Login Successful
+              QList<QString> tempMessage;
+              tempMessage.append(QString::number(tokens[0].toInt()));
+              tempMessage.append("|"+ QString::number(info));
+              sendMessage(tempMessage);
+          }
         }
+        break;
+    }
+
     case Msg::USERLOGIN:
         {
-            //userLogin();
+            int info;
+            if (tokens.count() == 3){
+               info = userLogin(tokens);
+               QList<QString> tempMessage;
+               tempMessage.append(QString::number(tokens[0].toInt()));
+               tempMessage.append("|"+ QString::number(info));
+               sendMessage(tempMessage);
+            }
             break;
         }
     case Msg::CREATEGAME:
-        {
-            createGame(tokens);
+    {
+        if (tokens.count() == 6){
+            if (createGame(tokens)){
+                //send back true
+
+
+            }else {
+                //send back false
+            }
+        } else {
             break;
         }
+        break;
+    }
     case Msg::JOINGAME:
-        {
-            //joinGame();
+    {
+        //joinGame();
+        if (tokens.count() == 3){
+            if (joinGame(tokens)){
+                //send true
+            } else {
+                //send false
+            }
+        } else {
             break;
         }
+        break;
+    }
     case Msg::USERDATA:
-        {
-            //userData();
-            break;
-        }
+    {
+        //userData();
+        QList<QString> rlist;
+        if (tokens.count() == 2){
+            rlist.append(userData(tokens));
+            if (rlist[0] == "FALSE"){
+                QList<QString> tempMessage;
+                tempMessage.append(QString::number(tokens[0].toInt()));
+                tempMessage.append("|"+ rlist[0]);
+                sendMessage(tempMessage);
+
     //Default Drops message
+        }  // end of if
+      }    // end of if
+    }       //end of case
+  }         //end of switch
+}           //end of function
+
+int ConnectionThread::createAccount(QList<QString> userPass){
+    QString userName = userPass[1];
+    QString password = userPass[2];
+    // passes the Username and password
+    if (!queries->checkUser(userName)){
+        if(queries->addUser(userName, password)){
+            qDebug("Sent username and password");
+            return 1;
+        } else {
+            qDebug("Creation failed");
+            return 3;
+        }
+    }else {
+        qDebug("User needs a different username and return info to client");
+        return 2;
     }
 
 }
 
-void ConnectionThread::createAccount(QList<QString> userPass){
-    QString userName = userPass[0];
-    QString password = userPass[1];
-    // passes the Username and password
+int ConnectionThread::userLogin(QList<QString> login){
+    QString userName = login[1];
+    QString password = login[2];
+
+    if (queries->checkUser(userName)){
+        qDebug("User found");
+        if (queries->checkPassword(userName, password)){
+            return 1;
+            qDebug("Username and password sent");
+        } else {
+            return 3;
+            qDebug("Username and password not sent and ");
+        }
+    } else {
+        return 2;
+        qDebug("User not found");
+    }
+
+
 
 }
 
-void ConnectionThread::userLogin(QList<QString> login){
-    QString userName = login[0];
-    QString password = login[1];
-
-}
-
-void ConnectionThread::createGame(QList<QString> createGame){
-    //QString gameId = createGame[0]; //needs to be converted to int for database
-    //QString serverId = createGame[1]; //needs to be converted to int for database
-    //QString roomNum = createGame[2]; //needs to be converted to int for database
-    //QString numPlayers = createGame[3]; //needs to be converted to int for database
-
+bool ConnectionThread::createGame(QList<QString> createGame){
+    int gameId = createGame[1].toInt();
+    int numPlayers = createGame[4].toInt();
 
 
 
@@ -148,7 +219,7 @@ void ConnectionThread::createGame(QList<QString> createGame){
     int gameCreated = tokens.at(1).toInt();
     QString port = tokens.at(2);
     QByteArray message = "3|";
-    message.setNum(gameCreated);
+    message.append(QString::number(gameCreated));
     if (gameCreated)
     {
 
@@ -156,22 +227,64 @@ void ConnectionThread::createGame(QList<QString> createGame){
 
         socket->write(message);
         socket->flush();
+        return true;
     }
     else
     {
         qDebug() << "Game Server responded with faled game creation";
         socket->write(message);
         socket->flush();
+        return false;
     }
 
 
 }
 
-void ConnectionThread::joinGame(QList<QString>){
-    //Calls Seat
+bool ConnectionThread::joinGame(QList<QString> join){
+
+    QString userName = join[1];
+    int gID = join[2].toInt();
+    bool add = true;
+
+    queries->updateSeat(userName, gID);
+    queries->updateNumPlayer(gID);
+
+    //return room code to client
+
 
 }
 
-void ConnectionThread::userData(QList<QString>){
-    //Updates Player data
+QList<QString> ConnectionThread::userData(QList<QString> data){
+    //returns gameid connected to a userName
+    QString username = data[1];
+
+    QList<QString> gamelist;
+
+    gamelist.append(data);
+
+    gamelist = queries->getUserGameData(username);
+
+    if (gamelist.size() != 0){
+        return gamelist;
+    } else {
+        QList<QString> error;
+        error.append("0");
+        return error;
+
+    }
+}
+
+void ConnectionThread::sendMessage(QList<QString> tokens){
+
+     QByteArray array;
+
+     for(QString each: tokens)
+     {
+         array.append("|");
+         array.append(each);
+     }
+     array.append("||");
+
+     socket->write(array);
+     socket->flush();
 }

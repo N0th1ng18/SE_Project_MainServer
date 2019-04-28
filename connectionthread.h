@@ -43,12 +43,12 @@ private:
     };
 
 
-    void createAccount(QList<QString>);
-    void userLogin(QList<QString>);
-    void createGame(QList<QString>);
-    void joinGame(QList<QString>);
-    void userData(QList<QString>);
-
+    int createAccount(QList<QString> tokens);
+    int userLogin(QList<QString> tokens);
+    bool createGame(QList<QString> tokens);
+    bool joinGame(QList<QString> tokens);
+    QList<QString> userData(QList<QString> tokens);
+    void sendMessage(QList<QString> tokens);
 
 };
 

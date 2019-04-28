@@ -25,7 +25,7 @@ public:
     QList<QString> getUserGameData(QString userName);
     void expiredDormantServers();
     void updateSeat(QString userName, int gameId);
-    void updateNumPlayer(int gameID, int playerCount);
+    void updateNumPlayer(int gameID);
     void updateGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn);
     void updatePlayerScore(QString userName, int score);
     void createGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn);
