@@ -25,8 +25,6 @@ SOURCES += \
     connectionthread.cpp \
     authentication.cpp \
     queries.cpp \
-    queries.cpp \
-    queries.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
