@@ -270,7 +270,7 @@ void Queries::updateNumPlayer(int gameID){
     // if action is true add a player and if action is false remove a player
     qDebug ("Updating number of players in Game");
     QSqlQuery query(db);
-    query.prepare("UPDATE Game SET numPlayers = numPlayer + 1 WHERE gameID = (:gameID)");
+    query.prepare("UPDATE Game SET numPlayers = numPlayers + 1 WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
     if (query.exec())
     {
