@@ -78,7 +78,7 @@ void ConnectionThread::processMessage(QString message)
         }
     case Msg::CREATEGAME:
         {
-            //createGame();
+            createGame(tokens);
             break;
         }
     case Msg::JOINGAME:
@@ -115,6 +115,9 @@ void ConnectionThread::createGame(QList<QString> createGame){
     QString roomNum = createGame[2]; //needs to be converted to int for database
     QString numPlayers = createGame[3]; //needs to be converted to int for database
     QString turn = createGame[4]; //needs to be converted to int for database
+
+    socket->connectToHost()
+
 
 }
 

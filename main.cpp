@@ -15,18 +15,21 @@ int main(int argc, char *argv[])
     Server* server = new Server();
     server->startServer(clientPort);
 
-    //BEGIN TEST - REMOVE BEFORE RELEASE
+    /*BEGIN TEST - REMOVE BEFORE RELEASE
 
     QTcpSocket *testConnection = new QTcpSocket();
     testConnection->connectToHost("192.168.1.109", 5557);
     testConnection->waitForConnected();
 
+    for(int i=0; i<6; i++){
     testConnection->write("0");
     testConnection->flush();
     if(testConnection->waitForReadyRead())
         qDebug() << testConnection->readAll();
 
-    //END TEST - REMOVE BEFORE RELEASE
+
+    }
+    END TEST - REMOVE BEFORE RELEASE*/
 
 
 
