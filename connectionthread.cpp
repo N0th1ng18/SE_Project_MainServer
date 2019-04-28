@@ -10,7 +10,8 @@ ConnectionThread::ConnectionThread(int threadID, qintptr socketID, QObject *pare
 void ConnectionThread::run()
 {
     queries = new Queries();
-    queries->connect(threadID);
+    QString hostName = QString::number(socketDescriptor);
+    queries->connectDB(hostName);
 
     //create Socket
     socket = new QTcpSocket();
