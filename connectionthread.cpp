@@ -47,7 +47,7 @@ void ConnectionThread::readyRead()
     QString data = socket->readAll();
 
     //Break message into QList
-    QList<QString> messages = data.split("||");
+    QList<QString> messages = data.split("||", QString::SkipEmptyParts);
 
     for(int i=0; i < messages.size(); i++){
         processMessage(messages[i]);
@@ -68,7 +68,7 @@ void ConnectionThread::processMessage(QString message)
     qDebug() << message;
 
     //Seperate message into tokens
-    QList<QString> tokens = message.split("|");
+    QList<QString> tokens = message.split("|", QString::SkipEmptyParts);
 
 
 
@@ -118,21 +118,51 @@ void ConnectionThread::userLogin(QList<QString> login){
 }
 
 void ConnectionThread::createGame(QList<QString> createGame){
-    QString gameId = createGame[0]; //needs to be converted to int for database
-    QString serverId = createGame[1]; //needs to be converted to int for database
-    QString roomNum = createGame[2]; //needs to be converted to int for database
-    QString numPlayers = createGame[3]; //needs to be converted to int for database
-    QString turn = createGame[4]; //needs to be converted to int for database
-    /*
-     *
-     *
-     *              COME BACK TO THIS
-     *                  ISAAC
-     *
-     *
-     *
-     */
-    //socket->connectToHost()
+    //QString gameId = createGame[0]; //needs to be converted to int for database
+    //QString serverId = createGame[1]; //needs to be converted to int for database
+    //QString roomNum = createGame[2]; //needs to be converted to int for database
+    //QString numPlayers = createGame[3]; //needs to be converted to int for database
+
+
+
+
+    //Below query requires stuff in the database
+    //QString gameServerAddress = queries->selectBestServer();
+    QString gameServerAddress = "192.168.1.109";
+    //Swap above with query when database is populated
+
+
+
+    tempSocket = new QTcpSocket();  //Connection to GameServer for creation of game Thread
+    tempSocket->connectToHost(gameServerAddress, 5556);
+    qDebug() << tempSocket->waitForConnected();
+    tempSocket->write("0|1||");
+    tempSocket->flush();
+
+    tempSocket->waitForReadyRead();
+    QString response = tempSocket->readAll();
+    qDebug() << response;
+
+    QStringList tokens = response.split("|", QString::SkipEmptyParts);
+
+    int gameCreated = tokens.at(1).toInt();
+    QString port = tokens.at(2);
+    QByteArray message = "3|";
+    message.setNum(gameCreated);
+    if (gameCreated)
+    {
+
+        message.append("|" + gameServerAddress + "|" + port);
+
+        socket->write(message);
+        socket->flush();
+    }
+    else
+    {
+        qDebug() << "Game Server responded with faled game creation";
+        socket->write(message);
+        socket->flush();
+    }
 
 
 }

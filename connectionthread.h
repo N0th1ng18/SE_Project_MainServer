@@ -28,13 +28,14 @@ public slots:
 private:
     void processMessage(QString message);
     QTcpSocket *socket;
+    QTcpSocket *tempSocket;
     qintptr socketDescriptor;
     Queries* queries;
     int threadID;
 
     enum Msg
     {
-        CREATEACCOUNT,
+        CREATEACCOUNT=1,
         USERLOGIN,
         CREATEGAME,
         JOINGAME,

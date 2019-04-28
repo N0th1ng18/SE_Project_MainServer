@@ -128,7 +128,7 @@ QString Queries::selectBestServer()
     qDebug("Getting Best Server");
     // query database to find server with lowest games being played
     QSqlQuery query(db);
-    query.prepare("SELECT serverID, serverAddress FROM Server WHERE numGames = (SELECT MIN(numGames) FROM Server WHERE numGames < maxGames)");
+    query.prepare("SELECT serverAddress FROM Server WHERE numGames = (SELECT MIN(numGames) FROM Server WHERE numGames < maxGames)");
     //checks query to find correct serverID
     if(query.exec())
     {
@@ -136,8 +136,6 @@ QString Queries::selectBestServer()
         {
             // iterate through and find the serverID with lowest games
             bestServer.append(query.value(0).toString());
-            bestServer.append(":");
-            bestServer.append(query.value(1).toString());
             qDebug("Found Best Server");
         }
     }
@@ -145,7 +143,8 @@ QString Queries::selectBestServer()
     {
         qDebug() << "No server avalible";
     }
-    qDebug() << "Server Id : Server Address: " << bestServer;
+
+    qDebug() << "Server Address: " << bestServer;
     query.finish();
     return bestServer;
 }
