@@ -10,6 +10,7 @@
 class ConnectionThread : public QThread
 {
     Q_OBJECT
+
 public:
     explicit ConnectionThread(int threadID, qintptr socketID, QObject *parent = nullptr);
 
