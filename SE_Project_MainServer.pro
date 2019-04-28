@@ -24,8 +24,8 @@ SOURCES += \
     server.cpp \
     connectionthread.cpp \
     authentication.cpp \
-    queries (1).cpp \
-    queries (1).cpp \
+    queries.cpp \
+    queries.cpp \
     queries.cpp
 
 # Default rules for deployment.
