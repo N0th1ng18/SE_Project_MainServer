@@ -24,7 +24,8 @@ SOURCES += \
     server.cpp \
     connectionthread.cpp \
     authentication.cpp \
-    queries.cpp
+    queries (1).cpp \
+    queries (1).cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -35,7 +36,7 @@ HEADERS += \
     server.h \
     connectionthread.h \
     authentication.h \
-    queries.h
+    queries (1).h
 
 RESOURCES += \
     database.qrc

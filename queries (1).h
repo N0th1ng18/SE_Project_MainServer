@@ -14,18 +14,25 @@ public:
     bool checkUser(QString userName);
     bool checkPassword(QString userName, QString password);
     bool addUser(QString userName, QString password);
-    bool createGame(int gameId, int serverId, int roomNum, int numPlayer, int turns);
     QString selectBestServer();
     void updateServerInfo(QString serverData);
     QList<QString> getServerData(int roomID);
     QList<QString> getUserGameData(QString userName);
     void expiredDormantServers();
-    void isActive();
-    bool updateSeat(QString userName, int gameId);
-    bool updateNumPlayer(QString userName, int gameId, bool action);
+    void updateSeat(QString userName, int gameId);
+    void updateNumPlayer(int gameID, int playerCount);
+    void connectDB();
+    void disconnectDB();
+    void updateGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn);
+    void updatePlayerScore(QString userName, int score);
+    void createGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn);
+    void setDormant(int serverID);
+    QString getRoomCode(int gameID);
+    void setSeat(QString userName, int gameID);
+
 
 private:
-    //QSqlQuery query;
+    QSqlDatabase db;
 protected:
 
 

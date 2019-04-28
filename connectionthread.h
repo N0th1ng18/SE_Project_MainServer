@@ -47,6 +47,8 @@ private:
     bool joinGame(QList<QString>);
     QList<QString> userData(QList<QString>);
 
+    void constructMessage(QString, QString);
+
 
 };
 

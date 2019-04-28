@@ -75,13 +75,13 @@ void ConnectionThread::processMessage(QString message)
               info = createAccount(tokens);
               if (info == 1){
                   //Login Successful
-
-              }
-              if (info == 2){
+                  constructMessage( "0|", "True||");
+              } else if (info == 2){
                   //Username unavalable
-              }
-              if (info == 3){
+                  constructMessage("0|", "False||");
+              } else if (info == 3){
                  //Creation failed
+                 constructMessage("0|", "False||");
               }
             } else {
                 break;
@@ -95,12 +95,15 @@ void ConnectionThread::processMessage(QString message)
                info = userLogin(tokens);
                if (info == 1){
                    //Successful
+                   constructMessage( "1|", "True||");
                }
-               if (info == 2){
-                   //Unsuccessful
+               else if (info == 2){
+                   //User not found
+                   constructMessage( "1|", "False||");
                }
-               if (info == 3){
-                    //Creation failed
+               else if (info == 3){
+                    //Login Failed
+                   constructMessage( "1|", "False||");
                }
             }else {
                 break;
@@ -112,6 +115,8 @@ void ConnectionThread::processMessage(QString message)
             if (tokens.count() == 6){
                 if (createGame(tokens)){
                     //send back true
+
+
                 }else {
                     //send back false
                 }
@@ -141,10 +146,24 @@ void ConnectionThread::processMessage(QString message)
             if (tokens.count() == 2){
                 rlist.append(userData(tokens));
                 if (rlist[0] == "FALSE"){
+                    constructMessage("4|","0|False||");
                     break;
                 }else {
                     //Send List to Client
-                    //return rlist;
+                    int cot = rlist.count();
+
+
+                    //std::string out;
+                    //std::stringstream ss;
+                    //ss << cot;
+                    //out = ss.str();
+
+
+                    //QString srt = rlist.join("");
+                    //srt = rlist.join("|");
+                    //out.append(srt);
+
+                    constructMessage("4|", );
                 }
             }
             break;
@@ -245,3 +264,18 @@ QList<QString> ConnectionThread::userData(QList<QString> data){
 
     }
 }
+
+
+void ConnectionThread::constructMessage(QString mes, QString info){
+
+    QString s = mes + info;
+
+     QByteArray array;
+     array.append(s);
+
+     socket->write(array);
+     socket->flush(array);
+}
+
+
+
