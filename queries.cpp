@@ -12,9 +12,10 @@ Queries::~Queries()
 
 void Queries::connectDB(QString hostName) {
     qDebug("Connecting to DB");
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setHostName(hostName);
+    hostName.append("Connection");
+    db = QSqlDatabase::addDatabase("QSQLITE", hostName);
     db.setDatabaseName("C:/Database/db.sqlite");
+
     if(db.open())
     {
         qDebug("Connected to Database");
@@ -36,7 +37,7 @@ bool Queries::checkUser(QString userName)
 {
     qDebug() << "Checking User Names For: " << userName;
     //querey database with username
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("SELECT userName FROM Player WHERE userName = (:userName)");
     query.bindValue(":userName", userName);
     //checks query to see if userName is found
@@ -62,10 +63,15 @@ bool Queries::checkPassword(QString userName, QString password)
 {
     qDebug() << "Checking Passwords For: " << userName;
     //querey data with username to get password
-    QSqlQuery query;
+    QSqlQuery query(db);
     QString passCheck;
     query.prepare("SELECT password FROM Player WHERE userName = (:userName)");
     query.bindValue(":userName", userName);
+
+
+    qDebug() << query.lastError();
+
+
     //checks query to get password from userName
     if(query.exec()){
         while(query.next()){
@@ -81,7 +87,8 @@ bool Queries::checkPassword(QString userName, QString password)
     }
     //if the passwords do not match
     else {
-        qDebug() << "Passwords For User: " << userName << " Are Not The Same";        return false;
+        qDebug() << "Passwords For User: " << userName << " Are Not The Same";
+        return false;
     }
 
 
@@ -92,7 +99,7 @@ bool Queries::addUser(QString userName, QString password)
     int score = 0;
     qDebug("Adding New User");
     //prepare to add userName, password, and highScore to database for table Player
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("INSERT INTO Player (userName, password, highScore) "
                   "VALUES (:userName, :password, :highScore)");
     query.bindValue(":userName", userName);
@@ -120,7 +127,7 @@ QString Queries::selectBestServer()
     QString bestServer;
     qDebug("Getting Best Server");
     // query database to find server with lowest games being played
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("SELECT serverID, serverAddress FROM Server WHERE numGames = (SELECT MIN(numGames) FROM Server WHERE numGames < maxGames)");
     //checks query to find correct serverID
     if(query.exec())
@@ -147,7 +154,7 @@ void Queries::updateServerInfo(QString serverData)
 {
     //need more data
     qDebug("Updating Server Infomation");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("INSERT INTO something VALUES (:serverData)");
     query.bindValue(":serverData", serverData);
     if(query.exec())
@@ -168,7 +175,7 @@ QList<QString> Queries::getServerData(int gameID)
 {
     qDebug("Getting Server Data");
     QList<QString> serverList;
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("SELECT gameID FROM Seat WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
     if(query.exec())
@@ -192,7 +199,7 @@ QList<QString> Queries::getUserGameData(QString userName)
 {
     qDebug("Getting User Games List Data");
     QList<QString> gameList;
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("SELECT gameID FROM Seat WHERE userName = (:userName)");
     query.bindValue(":userName", userName);
     if(query.exec())
@@ -210,7 +217,7 @@ QList<QString> Queries::getUserGameData(QString userName)
 void Queries::expiredDormantServers()
 {
     qDebug("Removing Dormant Servers");
-    QSqlQuery query;
+    QSqlQuery query(db);
     int dormant = 1;
     // query database to find dormant servers
     query.prepare("DELETE FROM Server WHERE Dormant = (:dormant)");
@@ -229,7 +236,7 @@ void Queries::expiredDormantServers()
 }
 void Queries::setSeat(QString userName, int gameID){
     qDebug("Setting Seats");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("INSERT INTO Seat (userName, gameID) VALUES (:userName, :gameID)");
     query.bindValue(":userName", userName);
     query.bindValue(":gameID", gameID);
@@ -247,7 +254,7 @@ void Queries::setSeat(QString userName, int gameID){
 void Queries::updateSeat(QString userName, int gameID){
     //Used to add players to game and update the Seat
     qDebug ("Updating Seats");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("UPDATE Seat SET gameID = (:gameID) WHERE userName = (:userName)");
     query.bindValue(":userName", userName);
     query.bindValue(":gameID", gameID);
@@ -263,7 +270,7 @@ void Queries::updateNumPlayer(int gameID, int playerCount){
     //Updates the number of players
     // if action is true add a player and if action is false remove a player
     qDebug ("Updating number of players in Game");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("UPDATE Game SET numPlayers = (:playerCount) WHERE gameID = (:gameID)");
     query.bindValue(":playerCount", playerCount);
     query.bindValue(":gameID", gameID);
@@ -281,7 +288,7 @@ void Queries::updateNumPlayer(int gameID, int playerCount){
 void Queries::updatePlayerScore(QString userName, int score) {
 
     qDebug("Updating Player Score");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("UPDATE Player SET highScore = (:score) + highScore WHERE userName = (:userName)");
     query.bindValue(":score",score);
     query.bindValue(":userName", userName);
@@ -295,7 +302,7 @@ void Queries::updatePlayerScore(QString userName, int score) {
 
 void Queries::createGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn) {
     qDebug("Creating Game Table");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("INSERT INTO Game (gameID, serverID, roomCode, numPlayers, currentTurn)"
                   "VALUES (:gameID, :serverID, :roomCode, :numPlayers, :currentTurn)");
     query.bindValue(":gameID", gameID);
@@ -319,7 +326,7 @@ void Queries::createGame(int gameID, int serverID, QString roomCode, int numPlay
 void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn) {
     //need to update correctly, on which variable is static
     qDebug("Updating Game Table");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("UPDATE Game SET serverID = (:serverID), roomCode = (:roomCode), "
                   "numPlayers = (:numPlayers), currentTurn = (:currentTurn) WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
@@ -342,7 +349,7 @@ void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlay
 void Queries::setDormant(int serverID)
 {
     qDebug("Setting server to dormant");
-    QSqlQuery query;
+    QSqlQuery query(db);
     query.prepare("UPDATE Server SET Dormant = 1 WHERE serverID = (:serverID)");
     query.bindValue(":serverID", serverID);
     if(query.exec())
@@ -357,7 +364,7 @@ void Queries::setDormant(int serverID)
 QString Queries::getRoomCode(int gameID)
 {
     qDebug("Getting Room Code");
-    QSqlQuery query;
+    QSqlQuery query(db);
     QString roomCode;
     query.prepare("SELECT roomCode FROM Game WHERE gameID = (:gameID)");
     query.bindValue(":gameID",gameID);

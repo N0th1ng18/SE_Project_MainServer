@@ -14,7 +14,6 @@ class ConnectionThread : public QThread
 public:
     explicit ConnectionThread(int threadID, qintptr socketID, QObject *parent = nullptr);
 
-    void run();
 
 
 signals:
@@ -23,6 +22,7 @@ signals:
 public slots:
     void readyRead();
     void disconnected();
+    void setup();
 
 
 private:

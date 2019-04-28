@@ -26,6 +26,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
 
     ConnectionThread *thread = new ConnectionThread(threadID++, socketDescriptor, this);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    connect(thread, SIGNAL(started()), thread, SLOT(setup()));
     thread->start();
 
 }

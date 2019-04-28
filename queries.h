@@ -33,8 +33,8 @@ public:
     QString getRoomCode(int gameID);
     void setSeat(QString userName, int gameID);
 
-private:
     QSqlDatabase db;
+
 protected:
 
 

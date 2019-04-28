@@ -7,11 +7,18 @@ ConnectionThread::ConnectionThread(int threadID, qintptr socketID, QObject *pare
     this->threadID = threadID;
 }
 
-void ConnectionThread::run()
+void ConnectionThread::setup()
 {
     queries = new Queries();
     QString hostName = QString::number(socketDescriptor);
     queries->connectDB(hostName);
+
+    //BEGIN TEST
+
+    qDebug() << queries->checkUser("Nick");
+
+    //END TEST
+
 
     //create Socket
     socket = new QTcpSocket();
@@ -116,8 +123,16 @@ void ConnectionThread::createGame(QList<QString> createGame){
     QString roomNum = createGame[2]; //needs to be converted to int for database
     QString numPlayers = createGame[3]; //needs to be converted to int for database
     QString turn = createGame[4]; //needs to be converted to int for database
-
-    socket->connectToHost()
+    /*
+     *
+     *
+     *              COME BACK TO THIS
+     *                  ISAAC
+     *
+     *
+     *
+     */
+    //socket->connectToHost()
 
 
 }
