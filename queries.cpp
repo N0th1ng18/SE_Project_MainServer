@@ -75,6 +75,7 @@ bool Queries::checkPassword(QString userName, QString password)
     qDebug() << "Checking Passwords For: " << userName;
     //querey data with username to get password
     QSqlQuery query(db);
+    //Use variable to check password from user
     QString passCheck;
     //gets password from database
     query.prepare("SELECT password FROM Player WHERE userName = (:userName)");
@@ -195,6 +196,7 @@ void Queries::updateServerInfo(QString serverData)
 QList<QString> Queries::getServerData(int gameID)
 {
     qDebug("Getting Server Data");
+    //Use variable to return serverlist
     QList<QString> serverList;
     QSqlQuery query(db);
     query.prepare("SELECT gameID FROM Seat WHERE gameID = (:gameID)");
@@ -245,8 +247,9 @@ void Queries::expiredDormantServers()
 {
     qDebug("Removing Dormant Servers");
     QSqlQuery query(db);
+    //dormant variable is used to determine if server has been flagged for removal
     int dormant = 1;
-    // query database to find dormant servers
+    //query database to find dormant servers
     query.prepare("DELETE FROM Server WHERE Dormant = (:dormant)");
     //binds value(s) passed into function with query to database
     query.bindValue(":dormant", dormant);

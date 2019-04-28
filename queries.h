@@ -8,7 +8,6 @@ using namespace std;
 
 class Queries
 {
-
 public:
 
     Queries();
@@ -32,6 +31,8 @@ public:
     QList<QString> getServerData(int roomID);
     QList<QString> getUserGameData(QString userName);
     QSqlDatabase db;
+
+private:
 
 protected:
 };
