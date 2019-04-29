@@ -681,5 +681,6 @@ QString Queries::getAddressPort(int gameID)
         qDebug("Error getting server and port");
         qDebug() << query.lastError();
     }
+    query.finish();
     return address;
 }
