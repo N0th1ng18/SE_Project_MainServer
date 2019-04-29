@@ -26,7 +26,7 @@ bool Queries::userLogin(QString userName, QString password)
     }
     else
     {
-        qDebug("User and Password not found");
+        qDebug("User and Password dont match");
         query.finish();
         return false;
     }
@@ -560,3 +560,32 @@ QString Queries::getRoomCode(int gameID)
         qDebug("Suecessfully Got Room Code");
         return roomCode;
  }
+
+/*
+ * Description:
+ *  Creates a server in the database with variable(s) serverID, serverAddress, serverPort, numGames, maxGames
+ *
+ * Contributors:
+ *  John
+*/
+void Queries::createServer(int serverID, QString serverAddress, int serverPort, int numGames, int maxGames)
+{
+    qDebug("Creating Game Table");
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO Server (serverID, serverAddress, serverPort, numGames, maxGames)"
+                  "VALUES (:serverID, :serverAddress, :serverPort, :numGames, :maxGames)");
+    query.bindValue(":serverID", serverID);
+    query.bindValue(":serverAddress", serverAddress);
+    query.bindValue(":serverPort", serverPort);
+    query.bindValue(":numGames", numGames);
+    query.bindValue(":maxGames", maxGames);
+    if(query.exec())
+    {
+        qDebug("Successful Game Table Update");
+    }
+    else
+    {
+        qDebug("Error");
+        qDebug() << query.lastError();
+    }
+}
