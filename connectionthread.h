@@ -1,7 +1,5 @@
 #ifndef CONNECTIONTHREADCLIENT_H
 #define CONNECTIONTHREADCLIENT_H
-
-
 #include <QThread>
 #include <QTcpSocket>
 #include <QDebug>

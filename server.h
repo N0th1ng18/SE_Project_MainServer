@@ -1,7 +1,5 @@
 #ifndef SERVER_H
 #define SERVER_H
-
-
 #include <QTcpServer>
 #include <QTcpSocket>
 #include "connectionthread.h"
