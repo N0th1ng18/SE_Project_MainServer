@@ -192,12 +192,9 @@ bool ConnectionThread::createGame(QList<QString> createGame){
     //int gameId = createGame[1].toInt();
     //int numPlayers = createGame[4].toInt();
 
-    //Below query requires stuff in the database
-    //QString gameServerAddress = queries->selectBestServer();
-    QString gameServerAddress = "192.168.1.2";
+    QString gameServerAddress = queries->selectBestServer();
     //Swap above with query when database is populated
     qDebug() << "in ConnectionThread::createGame";
-
 
     tempSocket = new QTcpSocket();  //Connection to GameServer for creation of game Thread
     tempSocket->connectToHost(gameServerAddress, 5556);
