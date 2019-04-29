@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include <QTcpSocket>
-
+#include "queries.h"
 #include "server.h"
 #include "authentication.h"
 
@@ -14,6 +14,9 @@ int main(int argc, char *argv[])
     quint16 clientPort = 5555;
     Server* server = new Server();
     server->startServer(clientPort);
+    Queries * qy = new Queries();
+    qy->connectDB("bob");
+    qy->createGameID();
 
     /*BEGIN TEST - REMOVE BEFORE RELEASE
 

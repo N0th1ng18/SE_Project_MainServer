@@ -589,3 +589,46 @@ void Queries::createServer(int serverID, QString serverAddress, int serverPort, 
         qDebug() << query.lastError();
     }
 }
+
+/*
+ * Description:
+ *  Creates and sets a new gameID to the database with all other columns as null
+ *
+ * Contributors:
+ *  John
+*/
+void Queries::createGameID()
+{
+    qDebug("Setting Game ID");
+    QSqlQuery query(db);
+    int value = 0;
+    query.prepare("SELECT MIN(gameID) FROM Game");
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            value = query.value(0).toInt();
+            qDebug("Successfully created Game ID");
+        }
+    }
+    else
+    {
+        qDebug("Error setting game ID");
+        qDebug() << query.lastError();
+    }
+    query.finish();
+    value += 1;
+    query.prepare("INSERT INTO Game VALUES (:value, NULL, NULL, NULL, NULL)");
+    query.bindValue(":value", value);
+    if(query.exec())
+    {
+        qDebug("Made New Game ID With Nulls");
+
+    }
+    else
+    {
+        qDebug("Error adding game ID");
+        qDebug() << query.lastError();
+    }
+    query.finish();
+}
