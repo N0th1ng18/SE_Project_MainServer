@@ -359,6 +359,7 @@ void Queries::disconnectDB()
 /*
  * Description:
  *  Sets the seat in the data base using variable(s) userName and gameID
+ *  ONLY USED IF GROUP GETS SAVES WORKING
  *
  * Contributors:
  *  John
@@ -407,6 +408,7 @@ void Queries::updateNumPlayer(int gameID)
 /*
  * Description:
  *  Updates the current seats in the database that the user is currently in using variable(s) userName and gameID
+ *  ONLY USED IF GROUP GETS SAVES WORKING
  *
  * Contributors:
  *  John, Katie
