@@ -632,3 +632,54 @@ void Queries::createGameID()
     }
     query.finish();
 }
+
+/*
+ * Description:
+ *  Returns the server address and port from the database using variable(s) gameID
+ *
+ * Contributors:
+ *  John
+*/
+QString Queries::getAddressPort(int gameID)
+{
+    qDebug("Getting Server ID From gameID");
+    QSqlQuery query(db);
+    int check = 0;
+    QString address;
+    query.prepare("SELECT serverID FROM Game WHERE gameID = (:gameID)");
+    query.bindValue(":gameID", gameID);
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            check = query.value(0).toInt();
+            qDebug("Found Server ID");
+        }
+    }
+    else
+    {
+            qDebug("Error getting serverID");
+            qDebug() << query.lastError();
+    }
+    query.finish();
+    qDebug("Getting Server Address and Port");
+    query.prepare("SELECT serverAddress, serverPort FROM Server WHERE "
+                  "serverID = (:check)");
+    query.bindValue(":check", check);
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            qDebug("Got Server Addres and Port");
+            address = query.value(0).toString();
+            address.append(":");
+            address.append(query.value(1).toString());
+        }
+    }
+    else
+    {
+        qDebug("Error getting server and port");
+        qDebug() << query.lastError();
+    }
+    return address;
+}
