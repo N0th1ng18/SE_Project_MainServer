@@ -602,7 +602,7 @@ void Queries::createGameID()
     qDebug("Setting Game ID");
     QSqlQuery query(db);
     int value = 0;
-    query.prepare("SELECT MIN(gameID) FROM Game");
+    query.prepare("SELECT MAX(gameID) FROM Game");
     if(query.exec())
     {
         while(query.next())
