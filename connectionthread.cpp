@@ -97,24 +97,21 @@ void ConnectionThread::processMessage(QString message)
                info = userLogin(tokens);
                QList<QString> tempMessage;
                tempMessage.append(QString::number(tokens[0].toInt()));
-               tempMessage.append("|"+ QString::number(info));
+               tempMessage.append(QString::number(info));
+               QList<QString> gameList = queries->getUserGameData(tokens[1]);
+               tempMessage.append(QString::number(gameList.size()));
+               for(QString game: gameList)
+               {
+                    tempMessage.append(game);
+               }
                sendMessage(tempMessage);
+               qDebug() << tempMessage;
             }
             break;
         }
     case Msg::CREATEGAME:
     {
-        if (tokens.count() == 6){
-            if (createGame(tokens)){
-                //send back true
-
-
-            }else {
-                //send back false
-            }
-        } else {
-            break;
-        }
+        createGame(tokens);
         break;
     }
     case Msg::JOINGAME:
@@ -192,16 +189,14 @@ int ConnectionThread::userLogin(QList<QString> login){
 }
 
 bool ConnectionThread::createGame(QList<QString> createGame){
-    int gameId = createGame[1].toInt();
-    int numPlayers = createGame[4].toInt();
-
-
+    //int gameId = createGame[1].toInt();
+    //int numPlayers = createGame[4].toInt();
 
     //Below query requires stuff in the database
     //QString gameServerAddress = queries->selectBestServer();
-    QString gameServerAddress = "192.168.1.109";
+    QString gameServerAddress = "192.168.1.2";
     //Swap above with query when database is populated
-
+    qDebug() << "in ConnectionThread::createGame";
 
 
     tempSocket = new QTcpSocket();  //Connection to GameServer for creation of game Thread
@@ -224,7 +219,7 @@ bool ConnectionThread::createGame(QList<QString> createGame){
     {
 
         message.append("|" + gameServerAddress + "|" + port);
-
+        message.append("|1||");
         socket->write(message);
         socket->flush();
         return true;
