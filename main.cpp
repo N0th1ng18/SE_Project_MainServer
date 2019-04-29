@@ -2,7 +2,6 @@
 #include <QTcpSocket>
 #include "queries.h"
 #include "server.h"
-#include "authentication.h"
 
 int main(int argc, char *argv[])
 {

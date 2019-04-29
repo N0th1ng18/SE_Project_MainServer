@@ -5,7 +5,6 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include "connectionthread.h"
-#include "authentication.h"
 
 class Server : public QTcpServer
 {
