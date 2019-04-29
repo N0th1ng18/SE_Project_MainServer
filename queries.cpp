@@ -2,67 +2,6 @@
 
 /*
  * Description:
- *  Constructor
- *
- * Contributors:
- *  John
-*/
-Queries::Queries()
-{
-
-}
-
-/*
- * Description:
- *  Destructor
- *
- * Contributors:
- *  John
-*/
-Queries::~Queries()
-{
-
-}
-
-/*
- * Description:
- *  Connects to database/recieve new incoming connections with variable hostName
- *
- * Contributors:
- *  Isaac, John
-*/
-void Queries::connectDB(QString hostName)
-{
-    qDebug("Connecting to DB");
-    hostName.append("Connection");
-    db = QSqlDatabase::addDatabase("QSQLITE", hostName);
-    db.setDatabaseName("C:/Database/db.sqlite");
-    if(db.open())
-    {
-        qDebug("Connected to Database");
-    }
-    else
-    {
-        qDebug("Could not connect to DB");
-        qDebug() << db.lastError();
-    }
-}
-
-/*
- * Description:
- *  Disconnects from connected database
- *
- * Contributors:
- *  John
-*/
-void Queries::disconnectDB()
-{
-    db.close();
-    qDebug("Closed DB");
-}
-
-/*
- * Description:
  *  Checks if user name is already in database using variable userName
  *
  * Contributors:
@@ -292,6 +231,67 @@ void Queries::expiredDormantServers()
 
 /*
  * Description:
+ *  Constructor
+ *
+ * Contributors:
+ *  John
+*/
+Queries::Queries()
+{
+
+}
+
+/*
+ * Description:
+ *  Destructor
+ *
+ * Contributors:
+ *  John
+*/
+Queries::~Queries()
+{
+
+}
+
+/*
+ * Description:
+ *  Connects to database/recieve new incoming connections with variable hostName
+ *
+ * Contributors:
+ *  Isaac, John
+*/
+void Queries::connectDB(QString hostName)
+{
+    qDebug("Connecting to DB");
+    hostName.append("Connection");
+    db = QSqlDatabase::addDatabase("QSQLITE", hostName);
+    db.setDatabaseName("C:/Database/db.sqlite");
+    if(db.open())
+    {
+        qDebug("Connected to Database");
+    }
+    else
+    {
+        qDebug("Could not connect to DB");
+        qDebug() << db.lastError();
+    }
+}
+
+/*
+ * Description:
+ *  Disconnects from connected database
+ *
+ * Contributors:
+ *  John
+*/
+void Queries::disconnectDB()
+{
+    db.close();
+    qDebug("Closed DB");
+}
+
+/*
+ * Description:
  *  Sets the seat in the data base using variable(s) userName and gameID
  *
  * Contributors:
@@ -310,6 +310,29 @@ void Queries::setSeat(QString userName, int gameID)
     }
     else
     {
+        qDebug("Failed");
+        qDebug() << query.lastError();
+    }
+}
+
+/*
+ * Description:
+ *  Updates the number of players in the database using variable(s) gameID
+ *
+ * Contributors:
+ *  John, Katie
+*/
+void Queries::updateNumPlayer(int gameID)
+{
+    qDebug ("Updating number of players in Game");
+    QSqlQuery query(db);
+    query.prepare("UPDATE Game SET numPlayers = numPlayers + 1 WHERE gameID = (:gameID)");
+    query.bindValue(":gameID", gameID);
+    if (query.exec())
+    {
+        qDebug("Successfully Updated Player Count");
+    }
+    else {
         qDebug("Failed");
         qDebug() << query.lastError();
     }
@@ -341,23 +364,29 @@ void Queries::updateSeat(QString userName, int gameID){
 
 /*
  * Description:
- *  Updates the number of players in the database using variable(s) gameID
+ *  Updates the created games in the database with the variable(s) gameID, serverID, roomCode, numPlayers, currentTurn
  *
  * Contributors:
- *  John, Katie
+ *  John
 */
-void Queries::updateNumPlayer(int gameID)
+void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn)
 {
-    qDebug ("Updating number of players in Game");
+    qDebug("Updating Game Table");
     QSqlQuery query(db);
-    query.prepare("UPDATE Game SET numPlayers = numPlayers + 1 WHERE gameID = (:gameID)");
+    query.prepare("UPDATE Game SET serverID = (:serverID), roomCode = (:roomCode), "
+                  "numPlayers = (:numPlayers), currentTurn = (:currentTurn) WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
-    if (query.exec())
+    query.bindValue(":serverID", serverID);
+    query.bindValue(":roomCode", roomCode);
+    query.bindValue(":numPlayers", numPlayers);
+    query.bindValue(":currentTurn", currentTurn);
+    if(query.exec())
     {
-        qDebug("Successfully Updated Player Count");
+        qDebug("Successful Game Table Update");
     }
-    else {
-        qDebug("Failed");
+    else
+    {
+        qDebug("Error");
         qDebug() << query.lastError();
     }
 }
@@ -400,35 +429,6 @@ void Queries::createGame(int gameID, int serverID, QString roomCode, int numPlay
     QSqlQuery query(db);
     query.prepare("INSERT INTO Game (gameID, serverID, roomCode, numPlayers, currentTurn)"
                   "VALUES (:gameID, :serverID, :roomCode, :numPlayers, :currentTurn)");
-    query.bindValue(":gameID", gameID);
-    query.bindValue(":serverID", serverID);
-    query.bindValue(":roomCode", roomCode);
-    query.bindValue(":numPlayers", numPlayers);
-    query.bindValue(":currentTurn", currentTurn);
-    if(query.exec())
-    {
-        qDebug("Successful Game Table Update");
-    }
-    else
-    {
-        qDebug("Error");
-        qDebug() << query.lastError();
-    }
-}
-
-/*
- * Description:
- *  Updates the created games in the database with the variable(s) gameID, serverID, roomCode, numPlayers, currentTurn
- *
- * Contributors:
- *  John
-*/
-void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn)
-{
-    qDebug("Updating Game Table");
-    QSqlQuery query(db);
-    query.prepare("UPDATE Game SET serverID = (:serverID), roomCode = (:roomCode), "
-                  "numPlayers = (:numPlayers), currentTurn = (:currentTurn) WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
     query.bindValue(":serverID", serverID);
     query.bindValue(":roomCode", roomCode);
