@@ -33,6 +33,8 @@ public:
     void createGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn);
     void setDormant(int serverID);
     QString getRoomCode(int gameID);
+    void createServer(int serverID, QString serverAddress, int serverPort, int numGames, int maxGames);
+    void createGameID();
 
 private:
 
