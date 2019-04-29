@@ -6,6 +6,72 @@
  *
  * Contributors:
  *  John
+ *
+ * Notes:
+ *  Needed?
+*/
+bool Queries::userLogin(QString userName, QString password)
+{
+    qDebug("Checking user name and passowrd for login");
+    QSqlQuery query(db);
+    query.prepare("SELECT userName, password FROM Player WHERE "
+                  "userName = (:userName) AND password = (:password)");
+    query.bindValue(":userName", userName);
+    query.bindValue(":password", password);
+    if(query.exec())
+    {
+        qDebug("Successful Login");
+        query.finish();
+        return true;
+    }
+    else
+    {
+        qDebug("User and Password not found");
+        query.finish();
+        return false;
+    }
+}
+
+/*
+ * Description:
+ *  Gets user name from database using variable userName
+ *
+ * Contributors:
+ *  John
+ *
+ * Notes:
+ *  Needed?
+*/
+QString Queries::getUser(QString userName)
+{
+    qDebug("Getting user name");
+    QSqlQuery query(db);
+    QString user;
+    query.prepare("SELECT userName FROM Player WHERE userName = (:userName)");
+    query.bindValue(":userName", userName);
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            user.append(query.value(0).toString());
+            qDebug("Returning User Name");
+        }
+    }
+    else
+    {
+        qDebug("User Not found");
+        qDebug() << query.lastError();
+    }
+    query.finish();
+    return user;
+}
+
+/*
+ * Description:
+ *  Checks if user name is already in database using variable userName
+ *
+ * Contributors:
+ *  John
 */
 bool Queries::checkUser(QString userName)
 {

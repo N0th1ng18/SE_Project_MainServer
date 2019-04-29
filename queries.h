@@ -11,6 +11,8 @@ class Queries
 public:
 
     QSqlDatabase db;
+    bool userLogin(QString userName, QString password);
+    QString getUser(QString userName);
     bool checkUser(QString userName);
     bool checkPassword(QString userName, QString password);
     bool addUser(QString userName, QString password);
