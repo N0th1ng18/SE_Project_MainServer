@@ -2,7 +2,7 @@
 
 /*
  * Description:
- *  Checks if user name is already in database using variable userName
+ *  Checks if user name and password are already in database and login was successfull using variable userName
  *
  * Contributors:
  *  John
