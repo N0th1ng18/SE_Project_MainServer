@@ -199,7 +199,7 @@ bool ConnectionThread::createGame(QList<QString> createGame){
 
     //Below query requires stuff in the database
     //QString gameServerAddress = queries->selectBestServer();
-    QString gameServerAddress = "192.168.1.109";
+    QString gameServerAddress = "192.168.1.2";
     //Swap above with query when database is populated
 
 
