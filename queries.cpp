@@ -139,25 +139,33 @@ bool Queries::checkPassword(QString userName, QString password)
 */
 bool Queries::addUser(QString userName, QString password)
 {
-    int score = 0;
-    qDebug("Adding New User");
-    QSqlQuery query(db);
-    query.prepare("INSERT INTO Player (userName, password, highScore) "
-                  "VALUES (:userName, :password, :highScore)");
-    query.bindValue(":userName", userName);
-    query.bindValue(":password", password);
-    query.bindValue(":highScore", score);
-    if (query.exec())
+    if(checkUser(userName) == false)
     {
-        qDebug("Successful Add");
-        query.finish();
-        return true;
+        int score = 0;
+        qDebug("Adding New User");
+        QSqlQuery query(db);
+        query.prepare("INSERT INTO Player (userName, password, highScore) "
+                      "VALUES (:userName, :password, :highScore)");
+        query.bindValue(":userName", userName);
+        query.bindValue(":password", password);
+        query.bindValue(":highScore", score);
+        if (query.exec())
+        {
+            qDebug("Successful Add");
+            query.finish();
+            return true;
+        }
+        else
+        {
+            qDebug("Failed");
+            qDebug() << query.lastError();
+            query.finish();
+            return false;
+        }
     }
     else
     {
-        qDebug("Failed");
-        qDebug() << query.lastError();
-        query.finish();
+        qDebug("Failed adding user");
         return false;
     }
 }
