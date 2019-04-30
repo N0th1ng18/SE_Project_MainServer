@@ -331,10 +331,10 @@ QList<QString> Queries::getUserGameData(QString userName)
         while(query.next())
         {
             QString gamesIn = query.value(0).toString();
-            query.finish();
             gameList.append(gamesIn);
         }
     }
+    query.finish();
     return gameList;
 }
 
@@ -355,6 +355,7 @@ void Queries::expiredDormantServers()
     query.bindValue(":dormant", dormant);
     if(query.exec())
     {
+        query.finish();
         qDebug("All Dormant Servers Removed");
     }
     else {
@@ -417,6 +418,7 @@ void Queries::setSeat(QString userName, int gameID)
     query.bindValue(":gameID", gameID);
     if(query.exec())
     {
+        query.finish();
         qDebug("Seat Settings Done");
     }
     else
@@ -441,6 +443,7 @@ void Queries::updateNumPlayer(int gameID)
     query.bindValue(":gameID", gameID);
     if (query.exec())
     {
+        query.finish();
         qDebug("Successfully Updated Player Count");
     }
     else {
@@ -465,6 +468,7 @@ void Queries::updateSeat(QString userName, int gameID){
     query.bindValue(":gameID", gameID);
     if (query.exec())
     {
+        query.finish();
         qDebug("Successfully Updated Seats");
     }
     else
@@ -494,6 +498,7 @@ void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlay
     query.bindValue(":currentTurn", currentTurn);
     if(query.exec())
     {
+        query.finish();
         qDebug("Successful Game Table Update");
     }
     else
@@ -519,6 +524,7 @@ void Queries::updatePlayerScore(QString userName, int score)
     query.bindValue(":userName", userName);
     if (query.exec())
     {
+        query.finish();
         qDebug("Successfull Score Update");
     }
     else
@@ -548,6 +554,7 @@ void Queries::createGame(int gameID, int serverID, QString roomCode, int numPlay
     query.bindValue(":currentTurn", currentTurn);
     if(query.exec())
     {
+        query.finish();
         qDebug("Successful Game Table Update");
     }
     else
@@ -573,6 +580,7 @@ void Queries::setDormant(int serverID)
     query.bindValue(":serverID", serverID);
     if(query.exec())
     {
+        query.finish();
         qDebug("Successfully Flagged Server For Garbage");
     }
     else
@@ -603,6 +611,7 @@ QString Queries::getRoomCode(int gameID)
             roomCode = query.value(0).toString();
         }
     }
+        query.finish();
         qDebug("Suecessfully Got Room Code");
         return roomCode;
  }
@@ -627,6 +636,7 @@ void Queries::createServer(int serverID, QString serverAddress, int serverPort, 
     query.bindValue(":maxGames", maxGames);
     if(query.exec())
     {
+        query.finish();
         qDebug("Successful Game Table Update");
     }
     else
@@ -668,6 +678,7 @@ void Queries::createGameID()
     query.bindValue(":value", value);
     if(query.exec())
     {
+        query.finish();
         qDebug("Made New Game ID With Nulls");
 
     }
@@ -676,7 +687,6 @@ void Queries::createGameID()
         qDebug("Error adding game ID");
         qDebug() << query.lastError();
     }
-    query.finish();
 }
 
 /*
@@ -746,6 +756,7 @@ void Queries::updateGamePort(int gameID, QString gamePort)
     query.bindValue(":gameID", gameID);
     if(query.exec())
     {
+        query.finish();
         qDebug("Success");
     }
     else
