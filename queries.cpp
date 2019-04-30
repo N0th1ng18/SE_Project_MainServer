@@ -12,7 +12,6 @@
 */
 bool Queries::userLogin(QString userName, QString password)
 {
-    qDebug("Checking user name and passowrd for login");
     QSqlQuery query(db);
     query.prepare("SELECT userName, password FROM Player WHERE "
                   "userName = (:userName) AND password = (:password)");
@@ -20,7 +19,6 @@ bool Queries::userLogin(QString userName, QString password)
     query.bindValue(":password", password);
     if(query.exec())
     {
-        qDebug("Successful Login");
         query.finish();
         return true;
     }
@@ -44,7 +42,6 @@ bool Queries::userLogin(QString userName, QString password)
 */
 QString Queries::getUser(QString userName)
 {
-    qDebug("Getting user name");
     QSqlQuery query(db);
     QString user;
     query.prepare("SELECT userName FROM Player WHERE userName = (:userName)");
@@ -54,7 +51,6 @@ QString Queries::getUser(QString userName)
         while(query.next())
         {
             user.append(query.value(0).toString());
-            qDebug("Returning User Name");
         }
     }
     else
@@ -75,7 +71,6 @@ QString Queries::getUser(QString userName)
 */
 bool Queries::checkUser(QString userName)
 {
-    qDebug() << "Checking User Names For: " << userName;
     QSqlQuery query(db);
     query.prepare("SELECT userName FROM Player WHERE userName = (:userName)");
     query.bindValue(":userName", userName);
@@ -83,7 +78,6 @@ bool Queries::checkUser(QString userName)
     {
         if (query.next())
         {
-            qDebug() << "User " + userName + " Found";
             query.finish();
             return true;
         }
@@ -105,7 +99,6 @@ bool Queries::checkUser(QString userName)
 */
 bool Queries::checkPassword(QString userName, QString password)
 {
-    qDebug() << "Checking Passwords For: " << userName;
     QSqlQuery query(db);
     QString passCheck;
     query.prepare("SELECT password FROM Player WHERE userName = (:userName)");
@@ -142,7 +135,6 @@ bool Queries::addUser(QString userName, QString password)
     if(checkUser(userName) == false)
     {
         int score = 0;
-        qDebug("Adding New User");
         QSqlQuery query(db);
         query.prepare("INSERT INTO Player (userName, password, highScore) "
                       "VALUES (:userName, :password, :highScore)");
@@ -151,7 +143,6 @@ bool Queries::addUser(QString userName, QString password)
         query.bindValue(":highScore", score);
         if (query.exec())
         {
-            qDebug("Successful Add");
             query.finish();
             return true;
         }
@@ -181,7 +172,6 @@ QString Queries::selectBestServer()
 {
     QString serverAddress;
     int serverID = 0;
-    qDebug("Getting Best Server");
     QSqlQuery query(db);
     query.prepare("SELECT serverID, serverAddress FROM Server WHERE numGames = (SELECT MIN(numGames) FROM Server WHERE numGames < maxGames)");
     if(query.exec())
@@ -190,7 +180,6 @@ QString Queries::selectBestServer()
         {
             serverID = query.value(0).toInt();
             serverAddress = query.value(1).toString();
-            qDebug("Found Best Server");
         }
     }
     if(serverAddress == "")
@@ -204,7 +193,6 @@ QString Queries::selectBestServer()
         while(query.next())
         {
             gameIdCheck = query.value(0).toInt();
-            qDebug("Successfully found Game ID");
         }
     }
     else
@@ -214,20 +202,21 @@ QString Queries::selectBestServer()
     }
     query.finish();
     gameIdCheck += 1;
-    qDebug() << "Server Address: " << serverAddress;
     query.prepare("INSERT INTO Game VALUES (:gameID, :serverID, :roomCode, NULL, NULL)");
     query.bindValue(":gameID", gameIdCheck);
     query.bindValue(":serverID", serverID);
     query.bindValue(":roomCode", gameIdCheck);
     if(query.exec())
     {
-        qDebug("got um coach");
+        query.finish();
+        qDebug("Found Best Server");
     }
     else
     {
-     qDebug("aaron");
+        qDebug("Error");
+        qDebug() << query.lastError();
+        query.finish();
     }
-    query.finish();
     return serverAddress;
 }
 
@@ -241,13 +230,11 @@ QString Queries::selectBestServer()
 */
 void Queries::updateServerInfo(QString serverData)
 {
-    qDebug("Updating Server Infomation");
     QSqlQuery query(db);
     query.prepare("INSERT INTO something VALUES (:serverData)");
     query.bindValue(":serverData", serverData);
     if(query.exec())
     {
-        qDebug("Server Updated");
         query.finish();
     }
     else
@@ -268,7 +255,6 @@ void Queries::updateServerInfo(QString serverData)
 */
 QList<QString> Queries::getServerData(int gameID)
 {
-    qDebug("Getting Server Data");
     QList<QString> serverList;
     QSqlQuery query(db);
     query.prepare("SELECT gameID FROM Seat WHERE gameID = (:gameID)");
@@ -293,7 +279,6 @@ QList<QString> Queries::getServerData(int gameID)
 */
 QList<QString> Queries::getUserGameData(QString userName)
 {
-    qDebug("Getting User Games List Data");
     QList<QString> gameList;
     QSqlQuery query(db);
     query.prepare("SELECT gameID FROM Seat WHERE userName = (:userName)");
@@ -306,6 +291,7 @@ QList<QString> Queries::getUserGameData(QString userName)
             gameList.append(gamesIn);
         }
     }
+    query.finish();
     return gameList;
 }
 
@@ -319,17 +305,16 @@ QList<QString> Queries::getUserGameData(QString userName)
 */
 void Queries::expiredDormantServers()
 {
-    qDebug("Removing Dormant Servers");
     QSqlQuery query(db);
     int dormant = 1;
     query.prepare("DELETE FROM Server WHERE Dormant = (:dormant)");
     query.bindValue(":dormant", dormant);
     if(query.exec())
     {
-        qDebug("All Dormant Servers Removed");
+        query.finish();
     }
     else {
-        qDebug("Error Occured");
+        qDebug("Failed Deleting Servers");
         qDebug() << query.lastError();
     }
 }
@@ -367,7 +352,6 @@ Queries::~Queries()
 */
 void Queries::connectDB(QString hostName)
 {
-    qDebug("Connecting to DB");
     hostName.append("Connection");
     db = QSqlDatabase::addDatabase("QSQLITE", hostName);
     db.setDatabaseName("C:/Database/db.sqlite");
@@ -405,18 +389,17 @@ void Queries::disconnectDB()
 */
 void Queries::setSeat(QString userName, int gameID)
 {
-    qDebug("Setting Seats");
     QSqlQuery query(db);
     query.prepare("INSERT INTO Seat (userName, gameID) VALUES (:userName, :gameID)");
     query.bindValue(":userName", userName);
     query.bindValue(":gameID", gameID);
     if(query.exec())
     {
-        qDebug("Seat Settings Done");
+        query.finish();
     }
     else
     {
-        qDebug("Failed");
+        qDebug("Failed Setting Seats");
         qDebug() << query.lastError();
     }
 }
@@ -430,16 +413,16 @@ void Queries::setSeat(QString userName, int gameID)
 */
 void Queries::updateNumPlayer(int gameID)
 {
-    qDebug ("Updating number of players in Game");
     QSqlQuery query(db);
     query.prepare("UPDATE Game SET numPlayers = numPlayers + 1 WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
     if (query.exec())
     {
-        qDebug("Successfully Updated Player Count");
+        query.finish();
     }
     else {
-        qDebug("Failed");
+        query.finish();
+        qDebug("Failed Updating Seats");
         qDebug() << query.lastError();
     }
 }
@@ -453,18 +436,18 @@ void Queries::updateNumPlayer(int gameID)
  *  John, Katie
 */
 void Queries::updateSeat(QString userName, int gameID){
-    qDebug ("Updating Seats");
     QSqlQuery query(db);
     query.prepare("UPDATE Seat SET gameID = (:gameID) WHERE userName = (:userName)");
     query.bindValue(":userName", userName);
     query.bindValue(":gameID", gameID);
     if (query.exec())
     {
-        qDebug("Successfully Updated Seats");
+        query.finish();
     }
     else
     {
-        qDebug("Failed");
+        query.finish();
+        qDebug("Failed Updating Seats");
         qDebug() << query.lastError();
     }
 }
@@ -478,7 +461,6 @@ void Queries::updateSeat(QString userName, int gameID){
 */
 void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn)
 {
-    qDebug("Updating Game Table");
     QSqlQuery query(db);
     query.prepare("UPDATE Game SET serverID = (:serverID), roomCode = (:roomCode), "
                   "numPlayers = (:numPlayers), currentTurn = (:currentTurn) WHERE gameID = (:gameID)");
@@ -489,11 +471,12 @@ void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlay
     query.bindValue(":currentTurn", currentTurn);
     if(query.exec())
     {
-        qDebug("Successful Game Table Update");
+        query.finish();
     }
     else
     {
-        qDebug("Error");
+        query.finish();
+        qDebug("Failed Updating Game");
         qDebug() << query.lastError();
     }
 }
@@ -507,18 +490,18 @@ void Queries::updateGame(int gameID, int serverID, QString roomCode, int numPlay
 */
 void Queries::updatePlayerScore(QString userName, int score)
 {
-    qDebug("Updating Player Score");
     QSqlQuery query(db);
     query.prepare("UPDATE Player SET highScore = (:score) + highScore WHERE userName = (:userName)");
     query.bindValue(":score",score);
     query.bindValue(":userName", userName);
     if (query.exec())
     {
-        qDebug("Successfull Score Update");
+        query.finish();
     }
     else
     {
-        qDebug("Failed");
+        query.finish();
+        qDebug("Failed Updating Player Score");
         qDebug() << query.lastError();
     }
 }
@@ -532,7 +515,6 @@ void Queries::updatePlayerScore(QString userName, int score)
 */
 void Queries::createGame(int gameID, int serverID, QString roomCode, int numPlayers, int currentTurn)
 {
-    qDebug("Creating Game Table");
     QSqlQuery query(db);
     query.prepare("INSERT INTO Game (gameID, serverID, roomCode, numPlayers, currentTurn)"
                   "VALUES (:gameID, :serverID, :roomCode, :numPlayers, :currentTurn)");
@@ -543,11 +525,12 @@ void Queries::createGame(int gameID, int serverID, QString roomCode, int numPlay
     query.bindValue(":currentTurn", currentTurn);
     if(query.exec())
     {
-        qDebug("Successful Game Table Update");
+        query.finish();
     }
     else
     {
-        qDebug("Error");
+        query.finish();
+        qDebug("Failed Creating Game");
         qDebug() << query.lastError();
     }
 }
@@ -562,17 +545,17 @@ void Queries::createGame(int gameID, int serverID, QString roomCode, int numPlay
 */
 void Queries::setDormant(int serverID)
 {
-    qDebug("Setting server to dormant");
     QSqlQuery query(db);
     query.prepare("UPDATE Server SET Dormant = 1 WHERE serverID = (:serverID)");
     query.bindValue(":serverID", serverID);
     if(query.exec())
     {
-        qDebug("Successfully Flagged Server For Garbage");
+        query.finish();
     }
     else
     {
-        qDebug("Error");
+        query.finish();
+        qDebug("Failed Setting Dormants");
         qDebug() << query.lastError();
     }
 }
@@ -586,7 +569,6 @@ void Queries::setDormant(int serverID)
 */
 QString Queries::getRoomCode(int gameID)
 {
-    qDebug("Getting Room Code");
     QSqlQuery query(db);
     QString roomCode;
     query.prepare("SELECT roomCode FROM Game WHERE gameID = (:gameID)");
@@ -598,7 +580,7 @@ QString Queries::getRoomCode(int gameID)
             roomCode = query.value(0).toString();
         }
     }
-        qDebug("Suecessfully Got Room Code");
+        query.finish();
         return roomCode;
  }
 
@@ -611,7 +593,6 @@ QString Queries::getRoomCode(int gameID)
 */
 void Queries::createServer(int serverID, QString serverAddress, int serverPort, int numGames, int maxGames)
 {
-    qDebug("Creating Game Table");
     QSqlQuery query(db);
     query.prepare("INSERT INTO Server (serverID, serverAddress, serverPort, numGames, maxGames)"
                   "VALUES (:serverID, :serverAddress, :serverPort, :numGames, :maxGames)");
@@ -622,11 +603,12 @@ void Queries::createServer(int serverID, QString serverAddress, int serverPort, 
     query.bindValue(":maxGames", maxGames);
     if(query.exec())
     {
-        qDebug("Successful Game Table Update");
+        query.finish();
     }
     else
     {
-        qDebug("Error");
+        query.finish();
+        qDebug("Failed Creating Server");
         qDebug() << query.lastError();
     }
 }
@@ -639,8 +621,7 @@ void Queries::createServer(int serverID, QString serverAddress, int serverPort, 
  *  John
 */
 void Queries::createGameID()
-{
-    qDebug("Setting Game ID");
+{;
     QSqlQuery query(db);
     int value = 0;
     query.prepare("SELECT MAX(gameID) FROM Game");
@@ -649,7 +630,6 @@ void Queries::createGameID()
         while(query.next())
         {
             value = query.value(0).toInt();
-            qDebug("Successfully created Game ID");
         }
     }
     else
@@ -663,11 +643,12 @@ void Queries::createGameID()
     query.bindValue(":value", value);
     if(query.exec())
     {
-        qDebug("Made New Game ID With Nulls");
+       query.finish();
 
     }
     else
     {
+        query.finish();
         qDebug("Error adding game ID");
         qDebug() << query.lastError();
     }
@@ -683,7 +664,6 @@ void Queries::createGameID()
 */
 QString Queries::getAddressPort(int gameID)
 {
-    qDebug("Getting Server ID From gameID");
     QSqlQuery query(db);
     int check = 0;
     QString address;
@@ -694,7 +674,6 @@ QString Queries::getAddressPort(int gameID)
         while(query.next())
         {
             check = query.value(0).toInt();
-            qDebug("Found Server ID");
         }
     }
     else
@@ -703,7 +682,6 @@ QString Queries::getAddressPort(int gameID)
             qDebug() << query.lastError();
     }
     query.finish();
-    qDebug("Getting Server Address and Port");
     query.prepare("SELECT serverAddress, serverPort FROM Server WHERE "
                   "serverID = (:check)");
     query.bindValue(":check", check);
@@ -711,7 +689,6 @@ QString Queries::getAddressPort(int gameID)
     {
         while(query.next())
         {
-            qDebug("Got Server Addres and Port");
             address = query.value(0).toString();
             address.append(":");
             address.append(query.value(1).toString());
@@ -726,20 +703,26 @@ QString Queries::getAddressPort(int gameID)
     return address;
 }
 
+/*
+ * Description:
+ *  Updates the game port using variable(s) gameID and gamePort
+ *
+ * Contributors:
+ *  John
+*/
 void Queries::updateGamePort(int gameID, QString gamePort)
 {
-    qDebug("Updating Game Port");
     QSqlQuery query(db);
     query.prepare("INSERT INTO GAME gamePort VALUES (:gamePort) WHERE gameID = :gameID");
     query.bindValue(":gamePort", gamePort);
     query.bindValue(":gameID", gameID);
     if(query.exec())
     {
-        qDebug("Sueccess");
+        query.finish();
     }
     else
     {
+        query.finish();
         qDebug("Failed");
     }
-
 }
