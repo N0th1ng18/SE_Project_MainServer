@@ -111,7 +111,7 @@ void ConnectionThread::processMessage(QString message)
         }
     case Msg::CREATEGAME:
     {
-        createGame(tokens);
+        createGame();
         break;
     }
     case Msg::JOINGAME:
@@ -120,6 +120,7 @@ void ConnectionThread::processMessage(QString message)
         if (tokens.count() == 3){
             if (joinGame(tokens)){
                 //send true
+                qDebug() << "Sent Game Address, Port to Client";
             } else {
                 //send false
             }
@@ -188,18 +189,19 @@ int ConnectionThread::userLogin(QList<QString> login){
 
 }
 
-bool ConnectionThread::createGame(QList<QString> createGame){
-    //int gameId = createGame[1].toInt();
-    //int numPlayers = createGame[4].toInt();
+bool ConnectionThread::createGame(){
 
-    QString gameServerAddress = queries->selectBestServer();
+    QList<QString> serverData = queries->selectBestServer();
     //Swap above with query when database is populated
     qDebug() << "in ConnectionThread::createGame";
 
     tempSocket = new QTcpSocket();  //Connection to GameServer for creation of game Thread
-    tempSocket->connectToHost(gameServerAddress, 5556);
+    tempSocket->connectToHost(serverData.at(0), 5556);
     qDebug() << tempSocket->waitForConnected();
-    tempSocket->write("0|1||");
+    QString createGameMessage = "0|" + serverData.at(2) + "||";
+    QByteArray tempMessage;
+    tempMessage.append(createGameMessage);
+    tempSocket->write(tempMessage);
     tempSocket->flush();
 
     tempSocket->waitForReadyRead();
@@ -210,13 +212,14 @@ bool ConnectionThread::createGame(QList<QString> createGame){
 
     int gameCreated = tokens.at(1).toInt();
     QString port = tokens.at(2);
+    int gameID = serverData.at(1).toInt();
+    queries->updateGamePort(gameID, port);
     QByteArray message = "3|";
     message.append(QString::number(gameCreated));
     if (gameCreated)
     {
 
-        message.append("|" + gameServerAddress + "|" + port);
-        message.append("|1||");
+        message.append("|" + serverData.at(0) + "|" + port + "|" + serverData.at(2) +"||");
         socket->write(message);
         socket->flush();
         return true;
@@ -235,13 +238,14 @@ bool ConnectionThread::createGame(QList<QString> createGame){
 bool ConnectionThread::joinGame(QList<QString> join){
 
     QString userName = join[1];
-    int gID = join[2].toInt();
+    int roomCode, gameID = join[2].toInt();
     bool add = true;
 
-    queries->updateSeat(userName, gID);
-    queries->updateNumPlayer(gID);
+    queries->updateSeat(userName, roomCode);
+    queries->updateNumPlayer(roomCode);
+    QList<QString> serverInfo = queries->getAddressPort(gameID);
 
-    //return room code to client
+
 
 
 }

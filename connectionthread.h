@@ -43,7 +43,7 @@ private:
 
     int createAccount(QList<QString> tokens);
     int userLogin(QList<QString> tokens);
-    bool createGame(QList<QString> tokens);
+    bool createGame();
     bool joinGame(QList<QString> tokens);
     QList<QString> userData(QList<QString> tokens);
     void sendMessage(QList<QString> tokens);

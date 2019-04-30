@@ -139,25 +139,32 @@ bool Queries::checkPassword(QString userName, QString password)
 */
 bool Queries::addUser(QString userName, QString password)
 {
-    int score = 0;
-    qDebug("Adding New User");
-    QSqlQuery query(db);
-    query.prepare("INSERT INTO Player (userName, password, highScore) "
-                  "VALUES (:userName, :password, :highScore)");
-    query.bindValue(":userName", userName);
-    query.bindValue(":password", password);
-    query.bindValue(":highScore", score);
-    if (query.exec())
+    if(checkUser(userName) == false)
     {
-        qDebug("Successful Add");
-        query.finish();
-        return true;
+        int score = 0;
+        qDebug("Adding New User");
+        QSqlQuery query(db);
+        query.prepare("INSERT INTO Player (userName, password, highScore) "
+                      "VALUES (:userName, :password, :highScore)");
+        query.bindValue(":userName", userName);
+        query.bindValue(":password", password);
+        query.bindValue(":highScore", score);
+        if (query.exec())
+        {
+            qDebug("Successful Add");
+            query.finish();
+            return true;
+        }
+        else
+        {
+            qDebug("Failed");
+            qDebug() << query.lastError();
+            query.finish();
+            return false;
+        }
     }
     else
     {
-        qDebug("Failed");
-        qDebug() << query.lastError();
-        query.finish();
         return false;
     }
 }
@@ -169,7 +176,7 @@ bool Queries::addUser(QString userName, QString password)
  * Contributors:
  *  John
 */
-QString Queries::selectBestServer()
+QList<QString> Queries::selectBestServer()
 {
     QString serverAddress;
     int serverID = 0;
@@ -220,7 +227,11 @@ QString Queries::selectBestServer()
      qDebug("aaron");
     }
     query.finish();
-    return serverAddress;
+    QList<QString> tempList;
+    tempList.append(serverAddress);
+    tempList.append(QString::number(gameIdCheck));
+    tempList.append(QString::number(gameIdCheck));
+    return tempList;
 }
 
 /*
@@ -673,12 +684,12 @@ void Queries::createGameID()
  * Contributors:
  *  John
 */
-QString Queries::getAddressPort(int gameID)
+QList<QString> Queries::getAddressPort(int gameID)
 {
     qDebug("Getting Server ID From gameID");
     QSqlQuery query(db);
     int check = 0;
-    QString address;
+    QList<QString> address;
     query.prepare("SELECT serverID FROM Game WHERE gameID = (:gameID)");
     query.bindValue(":gameID", gameID);
     if(query.exec())
@@ -704,8 +715,7 @@ QString Queries::getAddressPort(int gameID)
         while(query.next())
         {
             qDebug("Got Server Addres and Port");
-            address = query.value(0).toString();
-            address.append(":");
+            address.append(query.value(0).toString());
             address.append(query.value(1).toString());
         }
     }
