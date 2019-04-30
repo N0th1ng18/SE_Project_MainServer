@@ -753,7 +753,7 @@ void Queries::updateGamePort(int gameID, QString gamePort)
     QSqlQuery query(db);
     query.prepare("INSERT INTO GAME gamePort VALUES (:gamePort) WHERE gameID = :gameID");
     query.bindValue(":gamePort", gamePort);
-    query.bindValue(":gameID", gameID);
+    query.bindValue(":gameID",  QString::number(gameID));
     if(query.exec())
     {
         query.finish();
