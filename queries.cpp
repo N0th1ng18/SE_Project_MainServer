@@ -199,7 +199,7 @@ bool Queries::addUser(QString userName, QString password)
  *  Selects and returns the best server from the database based on lowest games
  *
  * Contributors:
- *  John
+ *  Isaac, John
 */
 QList<QString> Queries::selectBestServer()
 {
@@ -651,7 +651,7 @@ void Queries::createServer(int serverID, QString serverAddress, int serverPort, 
  *  Creates and sets a new gameID to the database with all other columns as null
  *
  * Contributors:
- *  John
+ *  Isaac, John
 */
 void Queries::createGameID()
 {
@@ -694,7 +694,7 @@ void Queries::createGameID()
  *  Returns the server address and port from the database using variable(s) gameID
  *
  * Contributors:
- *  John
+ *  Isaac, John
 */
 QList<QString> Queries::getAddressPort(int gameID)
 {
@@ -745,7 +745,7 @@ QList<QString> Queries::getAddressPort(int gameID)
  *  Updates the game port using variable(s) gameID and gamePort
  *
  * Contributors:
- *  John
+ *  Isaac, John
 */
 void Queries::updateGamePort(int gameID, QString gamePort)
 {
