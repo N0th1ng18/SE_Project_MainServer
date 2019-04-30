@@ -26,7 +26,7 @@ public slots:
 private:
     void processMessage(QString message);
     QTcpSocket *socket;
-    QTcpSocket *tempSocket;
+    QTcpSocket *tempGameSocket;
     qintptr socketDescriptor;
     Queries* queries;
     int threadID;
