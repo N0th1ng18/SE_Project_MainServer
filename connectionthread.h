@@ -37,7 +37,9 @@ private:
         USERLOGIN,
         CREATEGAME,
         JOINGAME,
-        USERDATA
+        USERDATA,
+        ADDSEAT,
+        CLEARSEATS
     };
 
 
@@ -46,6 +48,8 @@ private:
     bool createGame();
     bool joinGame(QList<QString> tokens);
     QList<QString> userData(QList<QString> tokens);
+    void addSeat(QList<QString> tokens);
+    void clearSeats(QList<QString> tokens);
     void sendMessage(QList<QString> tokens);
 
 };

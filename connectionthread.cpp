@@ -178,7 +178,17 @@ void ConnectionThread::processMessage(QString message)
     //Default Drops message
         }  // end of if
       }    // end of if
+        break;                   //break for UserData switch
     }       //end of case
+    case Msg::ADDSEAT:
+    {
+        addSeat(tokens);
+        break;
+    }
+    case Msg::CLEARSEATS:
+    {
+        clearSeats(tokens);
+    }
   }         //end of switch
 }           //end of function
 
@@ -362,6 +372,30 @@ QList<QString> ConnectionThread::userData(QList<QString> data){
 
 /*
  *  Description:
+ *     Adds player to seat in database from a message from Game Server
+ *
+ *  Author:
+ *      Isaac
+ */
+void ConnectionThread::addSeat(QList<QString> tokens)
+{
+    queries->setSeat(tokens.at(1), tokens.at(2).toInt());
+}
+
+/*
+ *  Description:
+ *     Clears all the reserved seats when a game is finished.
+ *
+ *  Author:
+ *      Isaac
+ */
+void ConnectionThread::clearSeats(QList<QString> tokens)
+{
+    queries->clearSeats(tokens.at(1).toInt());
+}
+
+/*
+ *  Description:
  *      a general send message function for communicating with the client
  *      takes in a QList<QString>,
  *      converts it to a QByteArray with proper token seperation and end message flag
@@ -383,3 +417,4 @@ void ConnectionThread::sendMessage(QList<QString> tokens){
      socket->write(array);
      socket->flush();
 }
+

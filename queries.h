@@ -37,6 +37,7 @@ public:
     void createGameID();
     QList<QString> getAddressPort(int gameID);
     void updateGamePort(int gameID, QString gamePort);
+    void clearSeats(int gameID);
 
 private:
 

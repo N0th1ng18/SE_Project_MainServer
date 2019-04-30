@@ -765,3 +765,28 @@ void Queries::updateGamePort(int gameID, QString gamePort)
     }
 
 }
+
+/*
+ * Description:
+ *  Clears all the seats in the database using variable(s) gameID
+ *
+ * Contributors:
+ *  John
+*/
+void Queries::clearSeats(int gameID)
+{
+    QSqlQuery query(db);
+    query.prepare("DELETE FROM Seat WHERE gameID = :gameID");
+    query.bindValue(":gameID", gameID);
+    if(query.exec())
+    {
+        query.finish();
+    }
+    else
+    {
+        query.finish();
+        qDebug("Failed deleting seats");
+        qDebug() << query.lastError();
+    }
+
+}
