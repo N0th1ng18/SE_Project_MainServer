@@ -155,6 +155,7 @@ int ConnectionThread::createAccount(QList<QString> userPass){
     if (!queries->checkUser(userName)){
         if(queries->addUser(userName, password)){
             qDebug("Sent username and password");
+
             return 1;
         } else {
             qDebug("Creation failed");
@@ -238,12 +239,27 @@ bool ConnectionThread::createGame(){
 bool ConnectionThread::joinGame(QList<QString> join){
 
     QString userName = join[1];
-    int roomCode, gameID = join[2].toInt();
+    int roomCode = join[2].toInt();
     bool add = true;
 
     queries->updateSeat(userName, roomCode);
     queries->updateNumPlayer(roomCode);
-    QList<QString> serverInfo = queries->getAddressPort(gameID);
+    QList<QString> serverInfo = queries->getAddressPort(roomCode);
+    QList<QString> message;
+    message.append("4");
+    if(!serverInfo.isEmpty())
+    {
+        message.append("1");
+        message.append(serverInfo);
+        qDebug() << message;
+        return true;
+    }
+    else
+    {
+        message.append("0");
+        sendMessage(message);
+        return false;
+    }
 
 
 
