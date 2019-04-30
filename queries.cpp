@@ -331,6 +331,7 @@ QList<QString> Queries::getUserGameData(QString userName)
         while(query.next())
         {
             QString gamesIn = query.value(0).toString();
+            query.finish();
             gameList.append(gamesIn);
         }
     }
@@ -729,6 +730,13 @@ QList<QString> Queries::getAddressPort(int gameID)
     return address;
 }
 
+/*
+ * Description:
+ *  Updates the game port using variable(s) gameID and gamePort
+ *
+ * Contributors:
+ *  John
+*/
 void Queries::updateGamePort(int gameID, QString gamePort)
 {
     qDebug("Updating Game Port");
@@ -738,7 +746,7 @@ void Queries::updateGamePort(int gameID, QString gamePort)
     query.bindValue(":gameID", gameID);
     if(query.exec())
     {
-        qDebug("Sueccess");
+        qDebug("Success");
     }
     else
     {
