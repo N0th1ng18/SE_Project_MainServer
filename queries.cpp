@@ -721,5 +721,17 @@ QString Queries::getAddressPort(int gameID)
 void Queries::updateGamePort(int gameID, QString gamePort)
 {
     qDebug("Updating Game Port");
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO GAME gamePort VALUES (:gamePort) WHERE gameID = :gameID");
+    query.bindValue(":gamePort", gamePort);
+    query.bindValue(":gameID", gameID);
+    if(query.exec())
+    {
+        qDebug("Sueccess");
+    }
+    else
+    {
+        qDebug("Failed");
+    }
 
 }
