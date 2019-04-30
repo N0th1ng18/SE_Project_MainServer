@@ -171,25 +171,56 @@ bool Queries::addUser(QString userName, QString password)
 */
 QString Queries::selectBestServer()
 {
-    QString bestServer;
+    QString serverAddress;
+    int serverID = 0;
     qDebug("Getting Best Server");
     QSqlQuery query(db);
-    query.prepare("SELECT serverAddress FROM Server WHERE numGames = (SELECT MIN(numGames) FROM Server WHERE numGames < maxGames)");
+    query.prepare("SELECT serverID, serverAddress FROM Server WHERE numGames = (SELECT MIN(numGames) FROM Server WHERE numGames < maxGames)");
     if(query.exec())
     {
         while(query.next())
         {
-            bestServer.append(query.value(0).toString());
+            serverID = query.value(0).toInt();
+            serverAddress = query.value(1).toString();
             qDebug("Found Best Server");
         }
     }
-    if(bestServer == "")
+    if(serverAddress == "")
     {
         qDebug() << "No server avalible";
     }
-    qDebug() << "Server Address: " << bestServer;
+    query.prepare("SELECT MAX(gameID) FROM Game");
+    int gameIdCheck = 0;
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            gameIdCheck = query.value(0).toInt();
+            qDebug("Successfully found Game ID");
+        }
+    }
+    else
+    {
+        qDebug("Error setting game ID");
+        qDebug() << query.lastError();
+    }
     query.finish();
-    return bestServer;
+    gameIdCheck += 1;
+    qDebug() << "Server Address: " << serverAddress;
+    query.prepare("INSERT INTO Game VALUES (:gameID, :serverID, :roomCode, NULL, NULL)");
+    query.bindValue(":gameID", gameIdCheck);
+    query.bindValue(":serverID", serverID);
+    query.bindValue(":roomCode", gameIdCheck);
+    if(query.exec())
+    {
+        qDebug("got um coach");
+    }
+    else
+    {
+     qDebug("aaron");
+    }
+    query.finish();
+    return serverAddress;
 }
 
 /*
@@ -685,4 +716,10 @@ QString Queries::getAddressPort(int gameID)
     }
     query.finish();
     return address;
+}
+
+void Queries::updateGamePort(int gameID, QString gamePort)
+{
+    qDebug("Updating Game Port");
+
 }

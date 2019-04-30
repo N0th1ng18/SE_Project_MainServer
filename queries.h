@@ -36,6 +36,7 @@ public:
     void createServer(int serverID, QString serverAddress, int serverPort, int numGames, int maxGames);
     void createGameID();
     QString getAddressPort(int gameID);
+    void updateGamePort(int gameID, QString gamePort);
 
 private:
 

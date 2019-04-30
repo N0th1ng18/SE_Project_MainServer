@@ -15,7 +15,8 @@ int main(int argc, char *argv[])
     server->startServer(clientPort);
     Queries * qy = new Queries();
     qy->connectDB("bob");
-    qDebug() << qy->getAddressPort(11);
+    qy->selectBestServer();
+   // qDebug() << qy->getAddressPort(11);
     //qy->createGameID();
 
     /*BEGIN TEST - REMOVE BEFORE RELEASE
