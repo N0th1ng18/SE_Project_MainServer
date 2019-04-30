@@ -1,12 +1,25 @@
 #include "server.h"
 
-
+/*
+ *  Description:
+ *      empty constructor method
+ *
+ *  Author:
+ *      Isaac
+ */
 Server::Server(QObject *parent) :
     QTcpServer(parent)
 {
 
 }
 
+/*
+ *  Description:
+ *      starts the TcpServer for client connection to main server
+ *
+ *  Author:
+ *      Isaac
+ */
 void Server::startServer(quint16 port)
 {
 
@@ -20,6 +33,13 @@ void Server::startServer(quint16 port)
     }
 }
 
+/*
+ *  Description:
+ *      creates thread for each incomming connection for simultaneous processing
+ *
+ *  Author:
+ *      Isaac
+ */
 void Server::incomingConnection(qintptr socketDescriptor)
 {
     qDebug() << socketDescriptor << " Connecting...";
