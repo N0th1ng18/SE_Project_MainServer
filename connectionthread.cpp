@@ -13,12 +13,6 @@ void ConnectionThread::setup()
     QString hostName = QString::number(socketDescriptor);
     queries->connectDB(hostName);
 
-    //BEGIN TEST
-
-    qDebug() << queries->checkUser("Nick");
-
-    //END TEST
-
 
     //create Socket
     socket = new QTcpSocket();

@@ -1,5 +1,30 @@
 #include "queries.h"
 
+
+/*
+ * Description:
+ *  Constructor
+ *
+ * Contributors:
+ *  John
+*/
+Queries::Queries()
+{
+
+}
+
+/*
+ * Description:
+ *  Destructor
+ *
+ * Contributors:
+ *  John
+*/
+Queries::~Queries()
+{
+
+}
+
 /*
  * Description:
  *  Checks if user name and password are already in database and login was successfull using variable userName
@@ -220,11 +245,11 @@ QList<QString> Queries::selectBestServer()
     query.bindValue(":roomCode", gameIdCheck);
     if(query.exec())
     {
-        qDebug("got um coach");
+        qDebug("Room code reserved and linked to game.");
     }
     else
     {
-     qDebug("aaron");
+     qDebug("Room code reservation failed.");
     }
     query.finish();
     QList<QString> tempList;
@@ -335,30 +360,6 @@ void Queries::expiredDormantServers()
         qDebug("Error Occured");
         qDebug() << query.lastError();
     }
-}
-
-/*
- * Description:
- *  Constructor
- *
- * Contributors:
- *  John
-*/
-Queries::Queries()
-{
-
-}
-
-/*
- * Description:
- *  Destructor
- *
- * Contributors:
- *  John
-*/
-Queries::~Queries()
-{
-
 }
 
 /*
